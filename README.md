@@ -2,9 +2,8 @@
 
 ## Installation
 
-<!-- TODO -->
 ```shell
-go get github.com/<TODO>/<TODO>
+go get github.com/omc/bonsai-api-go/v1
 ```
 
 ## Example
