@@ -1,6 +1,12 @@
 package bonsai
 
 import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -17,9 +23,28 @@ type ClientImplTestSuite struct {
 	*require.Assertions
 	// Suite is the testify/suite used for all HTTP request tests
 	suite.Suite
+
+	// serveMux is the request multiplexer used for tests
+	serveMux *http.ServeMux
+	// server is the testing server on some local port
+	server *httptest.Server
+	// client allows each test to have a reachable *Client for testing
+	client *Client
 }
 
 func (s *ClientImplTestSuite) SetupSuite() {
+	// Configure http client and other miscellany
+	s.serveMux = http.NewServeMux()
+	s.server = httptest.NewServer(s.serveMux)
+	token, err := NewToken("TestToken")
+	if err != nil {
+		log.Fatal(fmt.Errorf("invalid token received: %w", err))
+	}
+	s.client = NewClient(
+		WithEndpoint(s.server.URL),
+		WithToken(token),
+	)
+
 	// configure testify
 	s.Assertions = require.New(s.T())
 }
@@ -56,6 +81,71 @@ func (s *ClientImplTestSuite) TestListOptsValues() {
 			s.Equal(tc.received.values().Encode(), tc.expect)
 		})
 	}
+}
+
+func (s *ClientImplTestSuite) TestClientAll() {
+	const expectedPageCount = 4
+	var (
+		ctx          = context.Background()
+		expectedPage = 1
+	)
+
+	s.serveMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set(HTTPHeaderContentType, HTTPContentTypeJSON)
+
+		respBody, _ := NewResponse()
+		respBody.PaginatedResponse = PaginatedResponse{
+			PageNumber:   3,
+			PageSize:     1,
+			TotalRecords: 3,
+		}
+
+		switch page := r.URL.Query().Get("page"); page {
+		case "", "1":
+			respBody.PaginatedResponse.PageNumber = 1
+		case "2":
+			respBody.PaginatedResponse.PageNumber = 2
+		case "3":
+			respBody.PaginatedResponse.PageNumber = 3
+		default:
+			s.FailNowf("invalid page parameter", "page parameter: %v", page)
+		}
+
+		err := json.NewEncoder(w).Encode(respBody)
+		s.Nil(err, "encode response body")
+	})
+
+	// The caller must track results against expected count
+	// A reminder to the reader: this is the caller.
+	var resultCount = 0
+	err := s.client.all(context.Background(), func(page int) (*Response, error) {
+		s.Equalf(expectedPage, page, "expected page number (%d) matches actual (%d)", expectedPage, page)
+
+		path := fmt.Sprintf("/?page=%d&size=1", page)
+
+		req, err := s.client.NewRequest(ctx, "GET", path, nil)
+		s.Nil(err, "new request for path")
+
+		resp, err := s.client.Do(context.Background(), req)
+		s.Nil(err, "do request")
+
+		expectedPage++
+		// A reference of how these funcs should handle this;
+		// recall, the response may be shorter than max.
+		//
+		// Ideally, this count wouldn't be derived from PageSize,
+		// but rather, from the total count of discovered items
+		// unmarshaled.
+		resultCount += max(resp.PageSize, 0)
+
+		if resultCount >= resp.TotalRecords {
+			resp.MarkPaginationComplete()
+		}
+		return resp, err
+	})
+	s.Nil(err, "client.all call")
+
+	s.Equalf(expectedPage, expectedPageCount, "expected page visit count (%d) matches actual visit count (%d)", expectedPageCount-1, expectedPage-1)
 }
 
 func TestClientImplTestSuite(t *testing.T) {

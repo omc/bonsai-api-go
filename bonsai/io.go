@@ -16,9 +16,11 @@ import (
 func IoClose(c io.Closer, err error) error {
 	cerr := c.Close()
 
-	// Returns nil if all are nil
-	return errors.Join(
-		fmt.Errorf("failed to close io.Closer: %w", cerr),
-		err,
-	)
+	if cerr != nil {
+		return errors.Join(
+			fmt.Errorf("failed to close io.Closer: %w", cerr),
+			err,
+		)
+	}
+	return err
 }
