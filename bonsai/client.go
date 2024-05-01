@@ -164,6 +164,18 @@ func WithProvisionRateLimit(l *rate.Limiter) ClientOption {
 	}
 }
 
+type PaginatedResponse struct {
+	PageNumber   int `json:"page_number"`
+	PageSize     int `json:"page_size"`
+	TotalRecords int `json:"total_records"`
+}
+
+type Response struct {
+	*http.Response
+
+	PaginatedResponse
+}
+
 type limiter = *rate.Limiter
 type ClientLimiter struct {
 	// limiter is an embedded default rate limiter, but not exposed.
@@ -180,6 +192,23 @@ type Client struct {
 	endpoint    string
 	token       Token
 	userAgent   string
+}
+
+func NewClient(options ...ClientOption) *Client {
+	client := &Client{
+		endpoint:   BaseEndpoint,
+		httpClient: &http.Client{},
+		rateLimiter: &ClientLimiter{
+			limiter:          rate.NewLimiter(rate.Every(DefaultClientBurstDuration), DefaultClientBurstAllowance),
+			provisionLimiter: rate.NewLimiter(rate.Every(ProvisionClientBurstDuration), ProvisionClientBurstAllowance),
+		},
+	}
+
+	for _, option := range options {
+		option(client)
+	}
+
+	return client
 }
 
 func (c *Client) UserAgent() string {
@@ -207,18 +236,6 @@ func (c *Client) NewRequest(ctx context.Context, method, path string, body io.Re
 	req = req.WithContext(ctx)
 
 	return req, nil
-}
-
-type PaginatedResponse struct {
-	PageNumber   int `json:"page_number"`
-	PageSize     int `json:"page_size"`
-	TotalRecords int `json:"total_records"`
-}
-
-type Response struct {
-	*http.Response
-
-	PaginatedResponse
 }
 
 // Do performs an HTTP request against the API.
@@ -297,23 +314,6 @@ func (c *Client) Do(ctx context.Context, r *http.Request) (*Response, error) {
 
 		return resp, err
 	}
-}
-
-func NewClient(options ...ClientOption) *Client {
-	client := &Client{
-		endpoint:   BaseEndpoint,
-		httpClient: &http.Client{},
-		rateLimiter: &ClientLimiter{
-			limiter:          rate.NewLimiter(rate.Every(DefaultClientBurstDuration), DefaultClientBurstAllowance),
-			provisionLimiter: rate.NewLimiter(rate.Every(ProvisionClientBurstDuration), ProvisionClientBurstAllowance),
-		},
-	}
-
-	for _, option := range options {
-		option(client)
-	}
-
-	return client
 }
 
 // all loops through the next page pagination results until empty
