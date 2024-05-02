@@ -118,12 +118,15 @@ func (s *ClientImplTestSuite) TestClientAll() {
 	// The caller must track results against expected count
 	// A reminder to the reader: this is the caller.
 	var resultCount = 0
-	err := s.client.all(context.Background(), func(page int) (*Response, error) {
-		s.Equalf(expectedPage, page, "expected page number (%d) matches actual (%d)", expectedPage, page)
+	err := s.client.all(context.Background(), newEmptyListOpts(), func(opt listOpts) (*Response, error) {
+		reqPath := "/"
 
-		path := fmt.Sprintf("/?page=%d&size=1", page)
+		if opt.Valid() {
+			s.Equalf(expectedPage, opt.Page, "expected page number (%d) matches actual (%d)", expectedPage, opt.Page)
+			reqPath = fmt.Sprintf("%s?page=%d&size=1", reqPath, opt.Page)
+		}
 
-		req, err := s.client.NewRequest(ctx, "GET", path, nil)
+		req, err := s.client.NewRequest(ctx, "GET", reqPath, nil)
 		s.NoError(err, "new request for path")
 
 		resp, err := s.client.Do(context.Background(), req)

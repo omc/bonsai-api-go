@@ -5,10 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
+	"reflect"
 )
 
 const (
-	spaceAPIBasePath = "/spaces"
+	SpaceAPIBasePath = "/spaces"
 )
 
 // CloudProvider contains details about the cloud provider and region
@@ -37,24 +39,43 @@ type SpaceClient struct {
 	*Client
 }
 
+type SpaceListOptions struct {
+	listOpts
+}
+
+func (o SpaceListOptions) values() url.Values {
+	return o.listOpts.values()
+}
+
 // list returns a list of Spaces for the page specified,
 // by performing a GET request against [spaceAPIBasePath].
 //
 // Note: Pagination is not currently supported.
-func (c *SpaceClient) list(ctx context.Context) ([]Space, *Response, error) {
+func (c *SpaceClient) list(ctx context.Context, opt SpaceListOptions) ([]Space, *Response, error) {
 	var (
-		req  *http.Request
-		resp *Response
-		err  error
+		req    *http.Request
+		reqURL *url.URL
+		resp   *Response
+		err    error
 	)
 	// Let's make some initial capacity to reduce allocations
 	results := SpacesResultList{
 		Spaces: make([]Space, 0, defaultResponseCapacity),
 	}
 
-	req, err = c.NewRequest(ctx, "GET", spaceAPIBasePath, nil)
+	reqURL, err = url.Parse(SpaceAPIBasePath)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("cannot parse relative url from basepath (%s): %w", SpaceAPIBasePath, err)
+	}
+
+	// Conditionally set options if we received any
+	if !reflect.ValueOf(opt).IsZero() {
+		reqURL.RawQuery = opt.values().Encode()
+	}
+
+	req, err = c.NewRequest(ctx, "GET", reqURL.String(), nil)
+	if err != nil {
+		return nil, nil, fmt.Errorf("creating new http request for URL (%s): %w", reqURL.String(), err)
 	}
 
 	resp, err = c.Do(ctx, req)
@@ -71,10 +92,32 @@ func (c *SpaceClient) list(ctx context.Context) ([]Space, *Response, error) {
 
 // All lists all Spaces from the Spaces API.
 func (c *SpaceClient) All(ctx context.Context) ([]Space, error) {
-	// No pagination support as yet
-	results, _, err := c.list(ctx)
+	var (
+		err  error
+		resp *Response
+	)
+
+	allResults := make([]Space, 0, defaultListResultSize)
+	// No pagination support as yet, but support it for future use
+
+	err = c.all(ctx, newEmptyListOpts(), func(opt listOpts) (*Response, error) {
+		var listResults []Space
+
+		listResults, resp, err = c.list(ctx, SpaceListOptions{listOpts: opt})
+		if err != nil {
+			return resp, fmt.Errorf("client.list failed: %w", err)
+		}
+
+		allResults = append(allResults, listResults...)
+		if len(allResults) >= resp.PageSize {
+			resp.MarkPaginationComplete()
+		}
+		return resp, err
+	})
+
 	if err != nil {
-		return results, fmt.Errorf("client.list failed: %w", err)
+		return allResults, fmt.Errorf("client.all failed: %w", err)
 	}
-	return results, err
+
+	return allResults, err
 }

@@ -60,6 +60,7 @@ const (
 // Magic numbers used to limit allocations, etc.
 const (
 	defaultResponseCapacity = 8
+	defaultListResultSize   = 100
 )
 
 // HTTP Status Response Errors.
@@ -116,7 +117,24 @@ type listOpts struct {
 	Size int // Size of each page, with a max of 100
 }
 
-// Values returns the listOpts as URL values.
+// newListOpts creates a new listOpts with default values per the API docs.
+//
+//nolint:unused // will be used for clusters endpoint
+func newDefaultListOpts() listOpts {
+	return listOpts{
+		Page: 1,
+		Size: defaultListResultSize,
+	}
+}
+
+// newEmptyListOpts returns an empty list opts,
+// to make it easy for readers to immediately see that there are no options
+// being passed, rather than seeing a struct be initialized in-line.
+func newEmptyListOpts() listOpts {
+	return listOpts{}
+}
+
+// values returns the listOpts as URL values.
 func (l listOpts) values() url.Values {
 	vals := url.Values{}
 	if l.Page > 0 {
@@ -126,6 +144,14 @@ func (l listOpts) values() url.Values {
 		vals.Add("size", strconv.Itoa(l.Size))
 	}
 	return vals
+}
+
+func (l listOpts) IsZero() bool {
+	return l.Page == 0 && l.Size == 0
+}
+
+func (l listOpts) Valid() bool {
+	return !l.IsZero()
 }
 
 type Application struct {
@@ -222,7 +248,7 @@ type PaginatedResponse struct {
 type httpResponse = *http.Response
 type Response struct {
 	httpResponse      `json:"-"`
-	BodyBuf           *bytes.Buffer `json:"-"`
+	BodyBuf           bytes.Buffer `json:"-"`
 	PaginatedResponse `json:"pagination"`
 }
 
@@ -294,6 +320,9 @@ type Client struct {
 	endpoint    string
 	token       Token
 	userAgent   string
+
+	// Clients
+	Space SpaceClient
 }
 
 func NewClient(options ...ClientOption) *Client {
@@ -309,6 +338,9 @@ func NewClient(options ...ClientOption) *Client {
 	for _, option := range options {
 		option(client)
 	}
+
+	// Configure child clients
+	client.Space = SpaceClient{client}
 
 	return client
 }
@@ -435,27 +467,33 @@ func (c *Client) doRequest(ctx context.Context, req *http.Request, reqBuf *bytes
 // all loops through the next page pagination results until empty
 // it allows the caller to pass a func (typically a closure) to collect
 // results.
-func (c *Client) all(ctx context.Context, f func(int) (*Response, error)) error {
-	var (
-		page = 1
-	)
+func (c *Client) all(ctx context.Context, opt listOpts, f func(opts listOpts) (*Response, error)) error {
 	for {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
 		default:
-			resp, err := f(page)
+			resp, err := f(opt)
 			if err != nil {
 				return err
 			}
 
-			// The caller is responsible for determining whether or not we've exhausted
+			// The caller is responsible for determining whether we've exhausted
 			// retries.
 			if reflect.ValueOf(resp.PaginatedResponse).IsZero() || resp.PageNumber <= 0 {
 				return nil
 			}
-			// We should be fine with a straight increment, but let's play it safe
-			page = resp.PageNumber + 1
+
+			// If the response contains a page number, provide the next call with an
+			// incremented page number, and the response page size.
+			//
+			// Again, the caller must determine whether the total number of results have been delivered.
+			if resp.PageNumber > 0 {
+				opt = listOpts{
+					Page: resp.PageNumber + 1,
+					Size: resp.PageSize,
+				}
+			}
 		}
 	}
 }
