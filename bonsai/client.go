@@ -57,6 +57,12 @@ const (
 	HTTPContentTypeJSON   string = "application/json"
 )
 
+// Magic numbers used to limit allocations, etc.
+const (
+	defaultResponseCapacity = 8
+	defaultListResultSize   = 100
+)
+
 // HTTP Status Response Errors.
 var (
 	ErrHTTPStatusNotFound            = errors.New("not found")
@@ -111,7 +117,24 @@ type listOpts struct {
 	Size int // Size of each page, with a max of 100
 }
 
-// Values returns the listOpts as URL values.
+// newListOpts creates a new listOpts with default values per the API docs.
+//
+//nolint:unused // will be used for clusters endpoint
+func newDefaultListOpts() listOpts {
+	return listOpts{
+		Page: 1,
+		Size: defaultListResultSize,
+	}
+}
+
+// newEmptyListOpts returns an empty list opts,
+// to make it easy for readers to immediately see that there are no options
+// being passed, rather than seeing a struct be initialized in-line.
+func newEmptyListOpts() listOpts {
+	return listOpts{}
+}
+
+// values returns the listOpts as URL values.
 func (l listOpts) values() url.Values {
 	vals := url.Values{}
 	if l.Page > 0 {
@@ -121,6 +144,14 @@ func (l listOpts) values() url.Values {
 		vals.Add("size", strconv.Itoa(l.Size))
 	}
 	return vals
+}
+
+func (l listOpts) IsZero() bool {
+	return l.Page == 0 && l.Size == 0
+}
+
+func (l listOpts) Valid() bool {
+	return !l.IsZero()
 }
 
 type Application struct {
@@ -216,21 +247,54 @@ type PaginatedResponse struct {
 
 type httpResponse = *http.Response
 type Response struct {
-	httpResponse `json:"-"`
-
-	Body              io.ReadCloser `json:"-"`
+	httpResponse      `json:"-"`
+	BodyBuf           bytes.Buffer `json:"-"`
 	PaginatedResponse `json:"pagination"`
 }
 
+// WithHTTPResponse assigns an *http.Response to a *Response item
+// and reads its response body into the *Response.
 func (r *Response) WithHTTPResponse(httpResp *http.Response) error {
-	var err error
 	r.httpResponse = httpResp
+
+	err := r.readHTTPResponseBody()
+	if err != nil {
+		return fmt.Errorf("reading response body for error extraction: %w", err)
+	}
 
 	return err
 }
 
 func (r *Response) MarkPaginationComplete() {
 	r.PaginatedResponse = PaginatedResponse{}
+}
+
+func (r *Response) readHTTPResponseBody() error {
+	var (
+		err error
+	)
+
+	_, err = r.BodyBuf.ReadFrom(r.Body)
+	if err != nil {
+		return fmt.Errorf("error reading response body: %w", err)
+	}
+
+	return nil
+}
+
+func extractRetryDelay(r *Response) (int64, error) {
+	var (
+		retryAfter int64
+		err        error
+	)
+	// We're already blocking on this routine, so sleep inline per the header request.
+	if retryAfterStr := r.Header.Get(HeaderRetryAfter); retryAfterStr != "" {
+		retryAfter, err = strconv.ParseInt(retryAfterStr, 10, 64)
+		if err != nil {
+			return retryAfter, fmt.Errorf("error parsing retry-after response: %w", err)
+		}
+	}
+	return retryAfter, nil
 }
 
 // NewResponse reserves this function signature, and is
@@ -256,6 +320,9 @@ type Client struct {
 	endpoint    string
 	token       Token
 	userAgent   string
+
+	// Clients
+	Space SpaceClient
 }
 
 func NewClient(options ...ClientOption) *Client {
@@ -271,6 +338,9 @@ func NewClient(options ...ClientOption) *Client {
 	for _, option := range options {
 		option(client)
 	}
+
+	// Configure child clients
+	client.Space = SpaceClient{client}
 
 	return client
 }
@@ -349,7 +419,7 @@ func (c *Client) doRequest(ctx context.Context, req *http.Request, reqBuf *bytes
 		req.Body = io.NopCloser(reqBuf)
 	}
 
-	// Context cancelled, timed-out, burst issue, or other rate limit issue;
+	// Context canceled, timed-out, burst issue, or other rate limit issue;
 	// let the callers handle it.
 	if err := c.rateLimiter.Wait(ctx); err != nil {
 		return nil, fmt.Errorf("failed while awaiting execution per rate-limit: %w", err)
@@ -359,6 +429,7 @@ func (c *Client) doRequest(ctx context.Context, req *http.Request, reqBuf *bytes
 	if err != nil {
 		return nil, fmt.Errorf("http request failed: %w", err)
 	}
+	defer func() { err = IoClose(httpResp.Body, err) }()
 
 	if httpResp == nil {
 		return nil, errors.New("received nil http.Response")
@@ -368,15 +439,6 @@ func (c *Client) doRequest(ctx context.Context, req *http.Request, reqBuf *bytes
 	if err != nil {
 		return resp, errors.New("creating new Response")
 	}
-	defer func() { err = IoClose(httpResp.Body, err) }()
-
-	// A place to store the response body bytes
-	bodyBuf := new(bytes.Buffer)
-
-	_, err = bodyBuf.ReadFrom(httpResp.Body)
-	if err != nil {
-		return resp, fmt.Errorf("error reading response body: %w", err)
-	}
 
 	err = resp.WithHTTPResponse(httpResp)
 	if err != nil {
@@ -385,16 +447,16 @@ func (c *Client) doRequest(ctx context.Context, req *http.Request, reqBuf *bytes
 
 	// Extract the pagination details
 	if httpResp.Header.Get("Content-Type") == HTTPContentTypeJSON {
-		err = json.Unmarshal(bodyBuf.Bytes(), &resp)
+		err = json.Unmarshal(resp.BodyBuf.Bytes(), &resp)
 		if err != nil {
-			return resp, fmt.Errorf("error unmarshaling response body: %w", err)
+			return resp, fmt.Errorf("error unmarshaling response body for pagination: %w", err)
 		}
 	}
 
 	if resp.StatusCode >= http.StatusBadRequest {
 		respErr := ResponseError{}
-		if err = json.Unmarshal(bodyBuf.Bytes(), &respErr); err != nil {
-			return resp, fmt.Errorf("error unmarshalling error response: %w", err)
+		if err = json.Unmarshal(resp.BodyBuf.Bytes(), &respErr); err != nil {
+			return resp, fmt.Errorf("unmarshalling error response: %w", err)
 		}
 		return resp, respErr
 	}
@@ -402,45 +464,36 @@ func (c *Client) doRequest(ctx context.Context, req *http.Request, reqBuf *bytes
 	return resp, err
 }
 
-func extractRetryDelay(resp *Response) (int64, error) {
-	var (
-		retryAfter int64
-		err        error
-	)
-	// We're already blocking on this routine, so sleep inline per the header request.
-	if retryAfterStr := resp.Header.Get(HeaderRetryAfter); retryAfterStr != "" {
-		retryAfter, err = strconv.ParseInt(retryAfterStr, 10, 64)
-		if err != nil {
-			return retryAfter, fmt.Errorf("error parsing retry-after response: %w", err)
-		}
-	}
-	return retryAfter, nil
-}
-
 // all loops through the next page pagination results until empty
 // it allows the caller to pass a func (typically a closure) to collect
 // results.
-func (c *Client) all(ctx context.Context, f func(int) (*Response, error)) error {
-	var (
-		page = 1
-	)
+func (c *Client) all(ctx context.Context, opt listOpts, f func(opts listOpts) (*Response, error)) error {
 	for {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
 		default:
-			resp, err := f(page)
+			resp, err := f(opt)
 			if err != nil {
 				return err
 			}
 
-			// The caller is responsible for determining whether or not we've exhausted
+			// The caller is responsible for determining whether we've exhausted
 			// retries.
 			if reflect.ValueOf(resp.PaginatedResponse).IsZero() || resp.PageNumber <= 0 {
 				return nil
 			}
-			// We should be fine with a straight increment, but let's play it safe
-			page = resp.PageNumber + 1
+
+			// If the response contains a page number, provide the next call with an
+			// incremented page number, and the response page size.
+			//
+			// Again, the caller must determine whether the total number of results have been delivered.
+			if resp.PageNumber > 0 {
+				opt = listOpts{
+					Page: resp.PageNumber + 1,
+					Size: resp.PageSize,
+				}
+			}
 		}
 	}
 }
