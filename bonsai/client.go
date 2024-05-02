@@ -18,6 +18,7 @@ import (
 	"golang.org/x/time/rate"
 )
 
+// Client representation configuration
 const (
 	// Version reflects this API Client's version
 	Version = "1.0.0"
@@ -26,7 +27,10 @@ const (
 	// UserAgent is the internally used value for the User-Agent header
 	// in all outgoing HTTP requests
 	UserAgent = "bonsai-api-go/" + Version
+)
 
+// Client rate limiter configuration
+const (
 	// DefaultClientBurstAllowance is the default Bonsai API request burst allowance
 	DefaultClientBurstAllowance = 60
 	// DefaultClientBurstDuration is the default interval for a token bucket of size DefaultClientBurstAllowance to be refilled.
@@ -35,10 +39,24 @@ const (
 	ProvisionClientBurstAllowance = 5
 	// ProvisionClientBurstDuration is the default interval for a token bucket of size ProvisionClientBurstAllowance to be refilled.
 	ProvisionClientBurstDuration = 1 * time.Minute
+)
 
+// Common API Response headers
+const (
 	// HeaderRetryAfter holds the number of seconds to delay before making the next request
 	// ref: https://bonsai.io/docs/api-error-429-too-many-requests
 	HeaderRetryAfter = "Retry-After"
+)
+
+// HTTP Content Types and related Header
+const (
+	HTTPHeaderContentType        = "Content-Type"
+	HTTPContentTypeJSON   string = "application/json"
+)
+
+// HTTP Status Response Errors
+var (
+	ErrorHTTPStatusNotFound = errors.New("not found")
 )
 
 // ResponseError captures API response errors
@@ -56,7 +74,15 @@ type ResponseError struct {
 // The community is as yet undecided on a great way to handle this
 // ref: https://github.com/golang/go/issues/47811
 func (r ResponseError) Error() string {
-	return strings.Join(r.Errors, "; ")
+	return fmt.Sprintf("%v (%d)", r.Errors, r.Status)
+}
+
+func (r ResponseError) Is(target error) bool {
+	switch r.Status {
+	case http.StatusNotFound:
+		return target == ErrorHTTPStatusNotFound
+	}
+	return false
 }
 
 // listOpts specifies options for listing resources.
@@ -164,6 +190,63 @@ func WithProvisionRateLimit(l *rate.Limiter) ClientOption {
 	}
 }
 
+type PaginatedResponse struct {
+	PageNumber   int `json:"page_number"`
+	PageSize     int `json:"page_size"`
+	TotalRecords int `json:"total_records"`
+}
+
+type httpResponse = *http.Response
+type Response struct {
+	httpResponse
+
+	Body              io.ReadCloser
+	PaginatedResponse `json:"pagination"`
+}
+
+func (r *Response) WithHTTPResponse(httpResp *http.Response) error {
+	var err error
+	bodyBuf := new(bytes.Buffer)
+	r.httpResponse = httpResp
+
+	if httpResp == nil {
+		return errors.New("received nil http.Response")
+	}
+
+	_, err = bodyBuf.ReadFrom(httpResp.Body)
+	if err != nil {
+		return fmt.Errorf("error reading response body: %w", err)
+	}
+
+	err = IoClose(httpResp.Body, err)
+	if err != nil {
+		return err
+	}
+
+	r.Body = io.NopCloser(bodyBuf)
+
+	switch httpResp.Header.Get("Content-Type") {
+	case HTTPContentTypeJSON:
+		err = json.Unmarshal(bodyBuf.Bytes(), r)
+	}
+	if err != nil {
+		return fmt.Errorf("error unmarshaling response body: %w", err)
+	}
+
+	return err
+}
+
+func (r *Response) MarkPaginationComplete() {
+	r.PaginatedResponse = PaginatedResponse{}
+}
+
+// NewResponse reserves this function signature, and is
+// the recommended way to instantiate a Response, as its behavior
+// may change.
+func NewResponse() (*Response, error) {
+	return &Response{}, nil
+}
+
 type limiter = *rate.Limiter
 type ClientLimiter struct {
 	// limiter is an embedded default rate limiter, but not exposed.
@@ -180,6 +263,23 @@ type Client struct {
 	endpoint    string
 	token       Token
 	userAgent   string
+}
+
+func NewClient(options ...ClientOption) *Client {
+	client := &Client{
+		endpoint:   BaseEndpoint,
+		httpClient: &http.Client{},
+		rateLimiter: &ClientLimiter{
+			limiter:          rate.NewLimiter(rate.Every(DefaultClientBurstDuration), DefaultClientBurstAllowance),
+			provisionLimiter: rate.NewLimiter(rate.Every(ProvisionClientBurstDuration), ProvisionClientBurstAllowance),
+		},
+	}
+
+	for _, option := range options {
+		option(client)
+	}
+
+	return client
 }
 
 func (c *Client) UserAgent() string {
@@ -209,30 +309,18 @@ func (c *Client) NewRequest(ctx context.Context, method, path string, body io.Re
 	return req, nil
 }
 
-type PaginatedResponse struct {
-	PageNumber   int `json:"page_number"`
-	PageSize     int `json:"page_size"`
-	TotalRecords int `json:"total_records"`
-}
-
-type Response struct {
-	*http.Response
-
-	PaginatedResponse
-}
-
 // Do performs an HTTP request against the API.
-func (c *Client) Do(ctx context.Context, r *http.Request) (*Response, error) {
+func (c *Client) Do(ctx context.Context, req *http.Request) (*Response, error) {
 	reqBuf := new(bytes.Buffer)
 
 	// Capture the original request body
-	if r.ContentLength > 0 {
-		_, err := reqBuf.ReadFrom(r.Body)
+	if req.ContentLength > 0 {
+		_, err := reqBuf.ReadFrom(req.Body)
 		if err != nil {
 			return nil, fmt.Errorf("error reading request body: %w", err)
 		}
 
-		err = IoClose(r.Body, err)
+		err = IoClose(req.Body, err)
 		if err != nil {
 			return nil, err
 		}
@@ -243,8 +331,8 @@ func (c *Client) Do(ctx context.Context, r *http.Request) (*Response, error) {
 		respBuf := new(bytes.Buffer)
 		// Wrap the buffer in a no-op Closer, such that
 		// it satisfies the ReadCloser interface
-		if r.ContentLength > 0 {
-			r.Body = io.NopCloser(reqBuf)
+		if req.ContentLength > 0 {
+			req.Body = io.NopCloser(reqBuf)
 		}
 
 		// Context cancelled, timed-out, burst issue, or other rate limit issue;
@@ -253,23 +341,20 @@ func (c *Client) Do(ctx context.Context, r *http.Request) (*Response, error) {
 			return nil, fmt.Errorf("failed while awaiting execution per rate-limit: %w", err)
 		}
 
-		httpResp, err := c.httpClient.Do(r)
-		resp := &Response{Response: httpResp}
+		httpResp, err := c.httpClient.Do(req)
 		if err != nil {
-			return resp, err
+			return nil, fmt.Errorf("http request failed: %w", err)
 		}
 
-		_, err = respBuf.ReadFrom(resp.Body)
+		resp, err := NewResponse()
 		if err != nil {
-			return resp, fmt.Errorf("error reading response body: %w", err)
+			return resp, fmt.Errorf("creating new Response")
 		}
 
-		err = IoClose(resp.Body, err)
+		err = resp.WithHTTPResponse(httpResp)
 		if err != nil {
-			return resp, err
+			return resp, fmt.Errorf("setting http response: %w", err)
 		}
-
-		resp.Body = io.NopCloser(respBuf)
 
 		if resp.StatusCode >= 400 {
 			respErr := ResponseError{}
@@ -299,23 +384,6 @@ func (c *Client) Do(ctx context.Context, r *http.Request) (*Response, error) {
 	}
 }
 
-func NewClient(options ...ClientOption) *Client {
-	client := &Client{
-		endpoint:   BaseEndpoint,
-		httpClient: &http.Client{},
-		rateLimiter: &ClientLimiter{
-			limiter:          rate.NewLimiter(rate.Every(DefaultClientBurstDuration), DefaultClientBurstAllowance),
-			provisionLimiter: rate.NewLimiter(rate.Every(ProvisionClientBurstDuration), ProvisionClientBurstAllowance),
-		},
-	}
-
-	for _, option := range options {
-		option(client)
-	}
-
-	return client
-}
-
 // all loops through the next page pagination results until empty
 // it allows the caller to pass a func (typically a closure) to collect
 // results.
@@ -335,7 +403,7 @@ func (c *Client) all(ctx context.Context, f func(int) (*Response, error)) error 
 
 			// The caller is responsible for determining whether or not we've exhausted
 			// retries.
-			if reflect.ValueOf(resp.PaginatedResponse).IsZero() || resp.PageNumber == 0 {
+			if reflect.ValueOf(resp.PaginatedResponse).IsZero() || resp.PageNumber <= 0 {
 				return nil
 			}
 			// We should be fine with a straight increment, but let's play it safe
