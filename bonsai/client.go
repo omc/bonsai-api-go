@@ -57,6 +57,11 @@ const (
 	HTTPContentTypeJSON   string = "application/json"
 )
 
+// Magic numbers used to limit allocations, etc.
+const (
+	defaultResponseCapacity = 8
+)
+
 // HTTP Status Response Errors.
 var (
 	ErrHTTPStatusNotFound            = errors.New("not found")
@@ -216,21 +221,54 @@ type PaginatedResponse struct {
 
 type httpResponse = *http.Response
 type Response struct {
-	httpResponse `json:"-"`
-
-	Body              io.ReadCloser `json:"-"`
+	httpResponse      `json:"-"`
+	BodyBuf           *bytes.Buffer `json:"-"`
 	PaginatedResponse `json:"pagination"`
 }
 
+// WithHTTPResponse assigns an *http.Response to a *Response item
+// and reads its response body into the *Response.
 func (r *Response) WithHTTPResponse(httpResp *http.Response) error {
-	var err error
 	r.httpResponse = httpResp
+
+	err := r.readHTTPResponseBody()
+	if err != nil {
+		return fmt.Errorf("reading response body for error extraction: %w", err)
+	}
 
 	return err
 }
 
 func (r *Response) MarkPaginationComplete() {
 	r.PaginatedResponse = PaginatedResponse{}
+}
+
+func (r *Response) readHTTPResponseBody() error {
+	var (
+		err error
+	)
+
+	_, err = r.BodyBuf.ReadFrom(r.Body)
+	if err != nil {
+		return fmt.Errorf("error reading response body: %w", err)
+	}
+
+	return nil
+}
+
+func extractRetryDelay(r *Response) (int64, error) {
+	var (
+		retryAfter int64
+		err        error
+	)
+	// We're already blocking on this routine, so sleep inline per the header request.
+	if retryAfterStr := r.Header.Get(HeaderRetryAfter); retryAfterStr != "" {
+		retryAfter, err = strconv.ParseInt(retryAfterStr, 10, 64)
+		if err != nil {
+			return retryAfter, fmt.Errorf("error parsing retry-after response: %w", err)
+		}
+	}
+	return retryAfter, nil
 }
 
 // NewResponse reserves this function signature, and is
@@ -349,7 +387,7 @@ func (c *Client) doRequest(ctx context.Context, req *http.Request, reqBuf *bytes
 		req.Body = io.NopCloser(reqBuf)
 	}
 
-	// Context cancelled, timed-out, burst issue, or other rate limit issue;
+	// Context canceled, timed-out, burst issue, or other rate limit issue;
 	// let the callers handle it.
 	if err := c.rateLimiter.Wait(ctx); err != nil {
 		return nil, fmt.Errorf("failed while awaiting execution per rate-limit: %w", err)
@@ -359,6 +397,7 @@ func (c *Client) doRequest(ctx context.Context, req *http.Request, reqBuf *bytes
 	if err != nil {
 		return nil, fmt.Errorf("http request failed: %w", err)
 	}
+	defer func() { err = IoClose(httpResp.Body, err) }()
 
 	if httpResp == nil {
 		return nil, errors.New("received nil http.Response")
@@ -368,15 +407,6 @@ func (c *Client) doRequest(ctx context.Context, req *http.Request, reqBuf *bytes
 	if err != nil {
 		return resp, errors.New("creating new Response")
 	}
-	defer func() { err = IoClose(httpResp.Body, err) }()
-
-	// A place to store the response body bytes
-	bodyBuf := new(bytes.Buffer)
-
-	_, err = bodyBuf.ReadFrom(httpResp.Body)
-	if err != nil {
-		return resp, fmt.Errorf("error reading response body: %w", err)
-	}
 
 	err = resp.WithHTTPResponse(httpResp)
 	if err != nil {
@@ -385,36 +415,21 @@ func (c *Client) doRequest(ctx context.Context, req *http.Request, reqBuf *bytes
 
 	// Extract the pagination details
 	if httpResp.Header.Get("Content-Type") == HTTPContentTypeJSON {
-		err = json.Unmarshal(bodyBuf.Bytes(), &resp)
+		err = json.Unmarshal(resp.BodyBuf.Bytes(), &resp)
 		if err != nil {
-			return resp, fmt.Errorf("error unmarshaling response body: %w", err)
+			return resp, fmt.Errorf("error unmarshaling response body for pagination: %w", err)
 		}
 	}
 
 	if resp.StatusCode >= http.StatusBadRequest {
 		respErr := ResponseError{}
-		if err = json.Unmarshal(bodyBuf.Bytes(), &respErr); err != nil {
-			return resp, fmt.Errorf("error unmarshalling error response: %w", err)
+		if err = json.Unmarshal(resp.BodyBuf.Bytes(), &respErr); err != nil {
+			return resp, fmt.Errorf("unmarshalling error response: %w", err)
 		}
 		return resp, respErr
 	}
 
 	return resp, err
-}
-
-func extractRetryDelay(resp *Response) (int64, error) {
-	var (
-		retryAfter int64
-		err        error
-	)
-	// We're already blocking on this routine, so sleep inline per the header request.
-	if retryAfterStr := resp.Header.Get(HeaderRetryAfter); retryAfterStr != "" {
-		retryAfter, err = strconv.ParseInt(retryAfterStr, 10, 64)
-		if err != nil {
-			return retryAfter, fmt.Errorf("error parsing retry-after response: %w", err)
-		}
-	}
-	return retryAfter, nil
 }
 
 // all loops through the next page pagination results until empty
