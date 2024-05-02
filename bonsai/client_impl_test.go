@@ -51,8 +51,8 @@ func (s *ClientImplTestSuite) SetupSuite() {
 
 func (s *ClientImplTestSuite) TestClientDefaultRateLimit() {
 	c := NewClient()
-	s.Equal(c.rateLimiter.Burst(), DefaultClientBurstAllowance)
-	s.Equal(c.rateLimiter.Limit(), rate.Every(DefaultClientBurstDuration))
+	s.Equal(DefaultClientBurstAllowance, c.rateLimiter.Burst())
+	s.InEpsilon(float64(rate.Every(DefaultClientBurstDuration)), float64(c.rateLimiter.Limit()), Float64Epsilon)
 }
 
 func (s *ClientImplTestSuite) TestListOptsValues() {
@@ -112,7 +112,7 @@ func (s *ClientImplTestSuite) TestClientAll() {
 		}
 
 		err := json.NewEncoder(w).Encode(respBody)
-		s.Nil(err, "encode response body")
+		s.NoError(err, "encode response body")
 	})
 
 	// The caller must track results against expected count
@@ -124,10 +124,10 @@ func (s *ClientImplTestSuite) TestClientAll() {
 		path := fmt.Sprintf("/?page=%d&size=1", page)
 
 		req, err := s.client.NewRequest(ctx, "GET", path, nil)
-		s.Nil(err, "new request for path")
+		s.NoError(err, "new request for path")
 
 		resp, err := s.client.Do(context.Background(), req)
-		s.Nil(err, "do request")
+		s.NoError(err, "do request")
 
 		expectedPage++
 		// A reference of how these funcs should handle this;
@@ -143,9 +143,15 @@ func (s *ClientImplTestSuite) TestClientAll() {
 		}
 		return resp, err
 	})
-	s.Nil(err, "client.all call")
+	s.NoError(err, "client.all call")
 
-	s.Equalf(expectedPage, expectedPageCount, "expected page visit count (%d) matches actual visit count (%d)", expectedPageCount-1, expectedPage-1)
+	s.Equalf(
+		expectedPage,
+		expectedPageCount,
+		"expected page visit count (%d) matches actual visit count (%d)",
+		expectedPageCount-1,
+		expectedPage-1,
+	)
 }
 
 func TestClientImplTestSuite(t *testing.T) {

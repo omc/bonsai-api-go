@@ -52,7 +52,5 @@ pre-commit run --all-files
 
 #### Go-licenses pre-commit hook
 
-Windows users will not be able to run the `go-licenses` hook as yet - @momer will be sending through a 
-PR to that project to resolve the issue, which is to do with OS-agnostic filepath support!
-
-
+Windows users: Ensure that you have `C:\Program Files\Git\usr\bin` added 
+to your `PATH`!

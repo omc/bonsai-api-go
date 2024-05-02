@@ -18,45 +18,53 @@ import (
 	"golang.org/x/time/rate"
 )
 
-// Client representation configuration
+// Client representation configuration.
 const (
-	// Version reflects this API Client's version
+	// Version reflects this API Client's version.
 	Version = "1.0.0"
-	// BaseEndpoint is the target API URL base location
+	// BaseEndpoint is the target API URL base location.
 	BaseEndpoint = "https://api.bonsai.io"
 	// UserAgent is the internally used value for the User-Agent header
-	// in all outgoing HTTP requests
+	// in all outgoing HTTP requests.
 	UserAgent = "bonsai-api-go/" + Version
 )
 
-// Client rate limiter configuration
+// Client rate limiter configuration.
 const (
-	// DefaultClientBurstAllowance is the default Bonsai API request burst allowance
+	// DefaultClientBurstAllowance is the default Bonsai API request burst
+	// allowance.
 	DefaultClientBurstAllowance = 60
-	// DefaultClientBurstDuration is the default interval for a token bucket of size DefaultClientBurstAllowance to be refilled.
+	// DefaultClientBurstDuration is the default interval for a token
+	// bucket of size DefaultClientBurstAllowance to be refilled.
 	DefaultClientBurstDuration = 1 * time.Minute
-	// ProvisionClientBurstAllowance is the default Bonsai API request burst allowance
+	// ProvisionClientBurstAllowance is the default Bonsai API request burst allowance.
 	ProvisionClientBurstAllowance = 5
-	// ProvisionClientBurstDuration is the default interval for a token bucket of size ProvisionClientBurstAllowance to be refilled.
+	// ProvisionClientBurstDuration is the default interval for a token bucket
+	// of size ProvisionClientBurstAllowance to be refilled.
 	ProvisionClientBurstDuration = 1 * time.Minute
 )
 
-// Common API Response headers
+// Common API Response headers.
 const (
-	// HeaderRetryAfter holds the number of seconds to delay before making the next request
+	// HeaderRetryAfter holds the number of seconds to delay before making the next request.
 	// ref: https://bonsai.io/docs/api-error-429-too-many-requests
 	HeaderRetryAfter = "Retry-After"
 )
 
-// HTTP Content Types and related Header
+// HTTP Content Types and related Header.
 const (
 	HTTPHeaderContentType        = "Content-Type"
 	HTTPContentTypeJSON   string = "application/json"
 )
 
-// HTTP Status Response Errors
+// HTTP Status Response Errors.
 var (
-	ErrorHTTPStatusNotFound = errors.New("not found")
+	ErrHTTPStatusNotFound            = errors.New("not found")
+	ErrHTTPStatusForbidden           = errors.New("forbidden")
+	ErrHTTPStatusPaymentRequired     = errors.New("payment required")
+	ErrHTTPStatusUnprocessableEntity = errors.New("unprocessable entity")
+	ErrHTTPStatusUnauthorized        = errors.New("unauthorized")
+	ErrHTTPStatusTooManyRequests     = errors.New("too many requests")
 )
 
 // ResponseError captures API response errors
@@ -79,9 +87,20 @@ func (r ResponseError) Error() string {
 
 func (r ResponseError) Is(target error) bool {
 	switch r.Status {
+	case http.StatusUnauthorized:
+		return target == ErrHTTPStatusUnauthorized
 	case http.StatusNotFound:
-		return target == ErrorHTTPStatusNotFound
+		return target == ErrHTTPStatusNotFound
+	case http.StatusForbidden:
+		return target == ErrHTTPStatusForbidden
+	case http.StatusPaymentRequired:
+		return target == ErrHTTPStatusPaymentRequired
+	case http.StatusUnprocessableEntity:
+		return target == ErrHTTPStatusUnprocessableEntity
+	case http.StatusTooManyRequests:
+		return target == ErrHTTPStatusTooManyRequests
 	}
+
 	return false
 }
 
@@ -134,13 +153,13 @@ func (t Token) NotEmpty() bool {
 
 func NewToken(token string) (Token, error) {
 	t := Token{token}
-	if ok := t.validHttpValue(); !ok {
+	if ok := t.validHTTPValue(); !ok {
 		return Token{}, errors.New("invalid token")
 	}
 	return t, nil
 }
 
-func (t Token) validHttpValue() bool {
+func (t Token) validHTTPValue() bool {
 	return httpguts.ValidHeaderFieldValue(t.string)
 }
 
@@ -152,7 +171,6 @@ func WithEndpoint(endpoint string) ClientOption {
 	return func(c *Client) {
 		c.endpoint = strings.TrimRight(endpoint, "/")
 	}
-
 }
 
 // WithToken configures a Client to use the specified token for authentication.
@@ -176,14 +194,14 @@ func WithApplication(app Application) ClientOption {
 	}
 }
 
-// WithDefaultRateLimit configures the default rate limit for client requests
+// WithDefaultRateLimit configures the default rate limit for client requests.
 func WithDefaultRateLimit(l *rate.Limiter) ClientOption {
 	return func(c *Client) {
 		c.rateLimiter.limiter = l
 	}
 }
 
-// WithProvisionRateLimit configures the rate limit for client requests to the Provision API
+// WithProvisionRateLimit configures the rate limit for client requests to the Provision API.
 func WithProvisionRateLimit(l *rate.Limiter) ClientOption {
 	return func(c *Client) {
 		c.rateLimiter.provisionLimiter = l
@@ -198,40 +216,15 @@ type PaginatedResponse struct {
 
 type httpResponse = *http.Response
 type Response struct {
-	httpResponse
+	httpResponse `json:"-"`
 
-	Body              io.ReadCloser
+	Body              io.ReadCloser `json:"-"`
 	PaginatedResponse `json:"pagination"`
 }
 
 func (r *Response) WithHTTPResponse(httpResp *http.Response) error {
 	var err error
-	bodyBuf := new(bytes.Buffer)
 	r.httpResponse = httpResp
-
-	if httpResp == nil {
-		return errors.New("received nil http.Response")
-	}
-
-	_, err = bodyBuf.ReadFrom(httpResp.Body)
-	if err != nil {
-		return fmt.Errorf("error reading response body: %w", err)
-	}
-
-	err = IoClose(httpResp.Body, err)
-	if err != nil {
-		return err
-	}
-
-	r.Body = io.NopCloser(bodyBuf)
-
-	switch httpResp.Header.Get("Content-Type") {
-	case HTTPContentTypeJSON:
-		err = json.Unmarshal(bodyBuf.Bytes(), r)
-	}
-	if err != nil {
-		return fmt.Errorf("error unmarshaling response body: %w", err)
-	}
 
 	return err
 }
@@ -289,8 +282,8 @@ func (c *Client) UserAgent() string {
 // NewRequest creates an HTTP request against the API. The returned request
 // is assigned with ctx and has all necessary headers set (auth, user agent, etc.).
 func (c *Client) NewRequest(ctx context.Context, method, path string, body io.Reader) (*http.Request, error) {
-	reqUrl := c.endpoint + path
-	req, err := http.NewRequest(method, reqUrl, body)
+	reqURL := c.endpoint + path
+	req, err := http.NewRequest(method, reqURL, body)
 	if err != nil {
 		return nil, err
 	}
@@ -328,60 +321,100 @@ func (c *Client) Do(ctx context.Context, req *http.Request) (*Response, error) {
 
 	// We only retry in the scenario of http.StatusTooManyRequests (429).
 	for {
-		respBuf := new(bytes.Buffer)
-		// Wrap the buffer in a no-op Closer, such that
-		// it satisfies the ReadCloser interface
-		if req.ContentLength > 0 {
-			req.Body = io.NopCloser(reqBuf)
-		}
-
-		// Context cancelled, timed-out, burst issue, or other rate limit issue;
-		// let the callers handle it.
-		if err := c.rateLimiter.Wait(ctx); err != nil {
-			return nil, fmt.Errorf("failed while awaiting execution per rate-limit: %w", err)
-		}
-
-		httpResp, err := c.httpClient.Do(req)
-		if err != nil {
-			return nil, fmt.Errorf("http request failed: %w", err)
-		}
-
-		resp, err := NewResponse()
-		if err != nil {
-			return resp, fmt.Errorf("creating new Response")
-		}
-
-		err = resp.WithHTTPResponse(httpResp)
-		if err != nil {
-			return resp, fmt.Errorf("setting http response: %w", err)
-		}
-
-		if resp.StatusCode >= 400 {
-			respErr := ResponseError{}
-			if err = json.Unmarshal(respBuf.Bytes(), &respErr); err != nil {
-				return resp, fmt.Errorf("error unmarshalling error response: %w", err)
-			}
-
+		respErr := &ResponseError{}
+		resp, err := c.doRequest(ctx, req, reqBuf)
+		switch {
+		case errors.As(err, respErr):
 			if reflect.ValueOf(respErr).IsZero() {
 				return resp, fmt.Errorf("unknown error occurred with response status %d", resp.StatusCode)
-			} else if respErr.Status == http.StatusTooManyRequests {
-				// We're already blocking on this routine, so sleep inline per the header request.
-				if retryAfterStr := resp.Header.Get(HeaderRetryAfter); retryAfterStr != "" {
-					retryAfter, err := strconv.ParseInt(retryAfterStr, 10, 64)
-					if err != nil {
-						return resp, fmt.Errorf("error parsing retry-after response: %w", err)
-					}
-					time.Sleep(time.Duration(retryAfter) * time.Second)
+			} else if errors.Is(err, ErrHTTPStatusTooManyRequests) {
+				// Block in this routine, if needed.
+				var delay int64
+				if delay, err = extractRetryDelay(resp); err != nil {
+					time.Sleep(time.Duration(delay) * time.Second)
 				}
-
 				continue
-			} else {
-				return resp, respErr
 			}
+			return resp, err
+		default:
+			return resp, err
 		}
-
-		return resp, err
 	}
+}
+
+func (c *Client) doRequest(ctx context.Context, req *http.Request, reqBuf *bytes.Buffer) (*Response, error) {
+	// Wrap the buffer in a no-op Closer, such that
+	// it satisfies the ReadCloser interface
+	if req.ContentLength > 0 {
+		req.Body = io.NopCloser(reqBuf)
+	}
+
+	// Context cancelled, timed-out, burst issue, or other rate limit issue;
+	// let the callers handle it.
+	if err := c.rateLimiter.Wait(ctx); err != nil {
+		return nil, fmt.Errorf("failed while awaiting execution per rate-limit: %w", err)
+	}
+
+	httpResp, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("http request failed: %w", err)
+	}
+
+	if httpResp == nil {
+		return nil, errors.New("received nil http.Response")
+	}
+
+	resp, err := NewResponse()
+	if err != nil {
+		return resp, errors.New("creating new Response")
+	}
+	defer func() { err = IoClose(httpResp.Body, err) }()
+
+	// A place to store the response body bytes
+	bodyBuf := new(bytes.Buffer)
+
+	_, err = bodyBuf.ReadFrom(httpResp.Body)
+	if err != nil {
+		return resp, fmt.Errorf("error reading response body: %w", err)
+	}
+
+	err = resp.WithHTTPResponse(httpResp)
+	if err != nil {
+		return resp, fmt.Errorf("setting http response: %w", err)
+	}
+
+	// Extract the pagination details
+	if httpResp.Header.Get("Content-Type") == HTTPContentTypeJSON {
+		err = json.Unmarshal(bodyBuf.Bytes(), &resp)
+		if err != nil {
+			return resp, fmt.Errorf("error unmarshaling response body: %w", err)
+		}
+	}
+
+	if resp.StatusCode >= http.StatusBadRequest {
+		respErr := ResponseError{}
+		if err = json.Unmarshal(bodyBuf.Bytes(), &respErr); err != nil {
+			return resp, fmt.Errorf("error unmarshalling error response: %w", err)
+		}
+		return resp, respErr
+	}
+
+	return resp, err
+}
+
+func extractRetryDelay(resp *Response) (int64, error) {
+	var (
+		retryAfter int64
+		err        error
+	)
+	// We're already blocking on this routine, so sleep inline per the header request.
+	if retryAfterStr := resp.Header.Get(HeaderRetryAfter); retryAfterStr != "" {
+		retryAfter, err = strconv.ParseInt(retryAfterStr, 10, 64)
+		if err != nil {
+			return retryAfter, fmt.Errorf("error parsing retry-after response: %w", err)
+		}
+	}
+	return retryAfter, nil
 }
 
 // all loops through the next page pagination results until empty
