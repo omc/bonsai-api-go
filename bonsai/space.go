@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"path"
 	"reflect"
 )
 
@@ -65,7 +66,7 @@ func (c *SpaceClient) list(ctx context.Context, opt SpaceListOptions) ([]Space, 
 
 	reqURL, err = url.Parse(SpaceAPIBasePath)
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot parse relative url from basepath (%s): %w", SpaceAPIBasePath, err)
+		return results.Spaces, nil, fmt.Errorf("cannot parse relative url from basepath (%s): %w", SpaceAPIBasePath, err)
 	}
 
 	// Conditionally set options if we received any
@@ -75,16 +76,16 @@ func (c *SpaceClient) list(ctx context.Context, opt SpaceListOptions) ([]Space, 
 
 	req, err = c.NewRequest(ctx, "GET", reqURL.String(), nil)
 	if err != nil {
-		return nil, nil, fmt.Errorf("creating new http request for URL (%s): %w", reqURL.String(), err)
+		return results.Spaces, nil, fmt.Errorf("creating new http request for URL (%s): %w", reqURL.String(), err)
 	}
 
 	resp, err = c.Do(ctx, req)
 	if err != nil {
-		return nil, resp, fmt.Errorf("client.do failed: %w", err)
+		return results.Spaces, resp, fmt.Errorf("client.do failed: %w", err)
 	}
 
 	if err = json.Unmarshal(resp.BodyBuf.Bytes(), &results); err != nil {
-		return nil, resp, fmt.Errorf("json.Unmarshal failed: %w", err)
+		return results.Spaces, resp, fmt.Errorf("json.Unmarshal failed: %w", err)
 	}
 
 	return results.Spaces, resp, nil
@@ -120,4 +121,37 @@ func (c *SpaceClient) All(ctx context.Context) ([]Space, error) {
 	}
 
 	return allResults, err
+}
+
+func (c *SpaceClient) GetByPath(ctx context.Context, spacePath string) (Space, error) {
+	var (
+		req    *http.Request
+		reqURL *url.URL
+		resp   *Response
+		err    error
+		result Space
+	)
+
+	reqURL, err = url.Parse(SpaceAPIBasePath)
+	if err != nil {
+		return result, fmt.Errorf("cannot parse relative url from basepath (%s): %w", SpaceAPIBasePath, err)
+	}
+
+	reqURL.Path = path.Join(reqURL.Path, spacePath)
+
+	req, err = c.NewRequest(ctx, "GET", reqURL.String(), nil)
+	if err != nil {
+		return result, fmt.Errorf("creating new http request for URL (%s): %w", reqURL.String(), err)
+	}
+
+	resp, err = c.Do(ctx, req)
+	if err != nil {
+		return result, fmt.Errorf("client.do failed: %w", err)
+	}
+
+	if err = json.Unmarshal(resp.BodyBuf.Bytes(), &result); err != nil {
+		return result, fmt.Errorf("json.Unmarshal failed: %w", err)
+	}
+
+	return result, nil
 }
