@@ -3,7 +3,6 @@ package bonsai_test
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,22 +10,21 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	_ "github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/omc/bonsai-api-go/v1/bonsai"
 )
 
 const (
-	ResponseErrorHttpStatusNotFound = `{  
+	ResponseErrorHTTPStatusNotFound = `
+		{  
 			"errors": [    
 				"Cluster doesnotexist-1234 not found.",
 				"Please review the documentation available at https://docs.bonsai.io",
 				"Undefined request."  
 			],  
 			"status": 404
-			}
-	`
+		}`
 )
 
 type ClientTestSuite struct {
@@ -67,8 +65,16 @@ func (s *ClientTestSuite) TestResponseErrorUnmarshallJson() {
 		expect   bonsai.ResponseError
 	}{
 		{
-			name:     "error example from docs site",
-			received: "{\n  \"errors\": [\n    \"This request has failed authentication. Please read the docs or email us at support@bonsai.io.\"\n  ],\n  \"status\": 401\n}",
+			name: "error example from docs site",
+			received: `
+				{
+					"errors": [
+						"This request has failed authentication. ` +
+				`Please read the docs or email us at support@bonsai.io."
+					],
+					"status": 401
+				}
+			`,
 			expect: bonsai.ResponseError{
 				Errors: []string{
 					"This request has failed authentication. Please read the docs or email us at support@bonsai.io.",
@@ -82,7 +88,7 @@ func (s *ClientTestSuite) TestResponseErrorUnmarshallJson() {
 		s.Run(tc.name, func() {
 			respErr := bonsai.ResponseError{}
 			err := json.Unmarshal([]byte(tc.received), &respErr)
-			s.Nil(err)
+			s.NoError(err)
 			s.Equal(tc.expect, respErr)
 		})
 	}
@@ -92,33 +98,33 @@ func (s *ClientTestSuite) TestClientResponseError() {
 	const p = "/clusters/doesnotexist-1234"
 
 	// Configure Servemux to serve the error response at this path
-	s.serveMux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
+	s.serveMux.HandleFunc(p, func(w http.ResponseWriter, _ *http.Request) {
 		var err error
 
 		w.Header().Set("Content-Type", bonsai.HTTPContentTypeJSON)
 		w.WriteHeader(http.StatusNotFound)
 
 		respErr := &bonsai.ResponseError{}
-		err = json.Unmarshal([]byte(ResponseErrorHttpStatusNotFound), respErr)
-		s.Nil(err, "successfully unmarshals json into bonsaiResponseError")
+		err = json.Unmarshal([]byte(ResponseErrorHTTPStatusNotFound), respErr)
+		s.NoError(err, "successfully unmarshals json into bonsaiResponseError")
 
 		err = json.NewEncoder(w).Encode(respErr)
-		s.Nil(err, "encodes http response into ResponseError")
+		s.NoError(err, "encodes http response into ResponseError")
 	})
 
 	req, err := s.client.NewRequest(context.Background(), "GET", p, nil)
-	s.Nil(err, "request creation returns no error")
+	s.NoError(err, "request creation returns no error")
 
 	resp, err := s.client.Do(context.Background(), req)
-	s.NotNil(err, "Client.Do returns an error")
+	s.Error(err, "Client.Do returns an error")
 
-	s.Equal(resp.StatusCode, http.StatusNotFound)
-	s.True(errors.As(err, &bonsai.ResponseError{}), "Client.Do error response type is of ResponseError")
-	s.True(errors.Is(err, bonsai.ErrorHTTPStatusNotFound), "ResponseError is comparable to bonsai.ErrorHttpResponseStatus")
+	s.Equal(http.StatusNotFound, resp.StatusCode)
+	s.ErrorAs(err, &bonsai.ResponseError{}, "Client.Do error response type is of ResponseError")
+	s.ErrorIs(err, bonsai.ErrHTTPStatusNotFound, "ResponseError is comparable to bonsai.ErrorHttpResponseStatus")
 }
 
 func (s *ClientTestSuite) TestClientResponseWithPagination() {
-	s.serveMux.HandleFunc("/clusters", func(w http.ResponseWriter, r *http.Request) {
+	s.serveMux.HandleFunc("/clusters", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("RateLimit-Limit", "1000")
 		w.Header().Set("RateLimit-Remaining", "999")
@@ -134,18 +140,18 @@ func (s *ClientTestSuite) TestClientResponseWithPagination() {
 				}
 			}
 		`)
-		s.Nil(err, "writes json response into response writer")
+		s.NoError(err, "writes json response into response writer")
 	})
 
 	req, err := s.client.NewRequest(context.Background(), "GET", "/clusters", nil)
-	s.Nil(err, "request creation returns no error")
+	s.NoError(err, "request creation returns no error")
 
 	resp, err := s.client.Do(context.Background(), req)
-	s.Nil(err, "Client.Do succeeds")
+	s.NoError(err, "Client.Do succeeds")
 
-	s.Equal(resp.PaginatedResponse.PageNumber, 1)
-	s.Equal(resp.PaginatedResponse.PageSize, 20)
-	s.Equal(resp.PaginatedResponse.TotalRecords, 255)
+	s.Equal(1, resp.PaginatedResponse.PageNumber)
+	s.Equal(20, resp.PaginatedResponse.PageSize)
+	s.Equal(255, resp.PaginatedResponse.TotalRecords)
 }
 
 func (s *ClientTestSuite) TestClient_WithApplication() {
