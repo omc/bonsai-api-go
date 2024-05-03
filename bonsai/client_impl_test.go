@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"golang.org/x/time/rate"
@@ -25,7 +26,7 @@ type ClientImplTestSuite struct {
 	suite.Suite
 
 	// serveMux is the request multiplexer used for tests
-	serveMux *http.ServeMux
+	serveMux *chi.Mux
 	// server is the testing server on some local port
 	server *httptest.Server
 	// client allows each test to have a reachable *Client for testing
@@ -34,7 +35,7 @@ type ClientImplTestSuite struct {
 
 func (s *ClientImplTestSuite) SetupSuite() {
 	// Configure http client and other miscellany
-	s.serveMux = http.NewServeMux()
+	s.serveMux = chi.NewRouter()
 	s.server = httptest.NewServer(s.serveMux)
 	token, err := NewToken("TestToken")
 	if err != nil {
@@ -90,7 +91,7 @@ func (s *ClientImplTestSuite) TestClientAll() {
 		expectedPage = 1
 	)
 
-	s.serveMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	s.serveMux.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set(HTTPHeaderContentType, HTTPContentTypeJSON)
 
 		respBody, _ := NewResponse()

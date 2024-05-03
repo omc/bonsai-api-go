@@ -11,7 +11,7 @@ import (
 )
 
 func (s *ClientTestSuite) TestReleaseClient_All() {
-	s.serveMux.HandleFunc(bonsai.ReleaseAPIBasePath, func(w http.ResponseWriter, _ *http.Request) {
+	s.serveMux.Get(bonsai.ReleaseAPIBasePath, func(w http.ResponseWriter, _ *http.Request) {
 		respStr := `
 		{
 			"releases": [
@@ -84,7 +84,7 @@ func (s *ClientTestSuite) TestReleaseClient_GetBySlug() {
 	urlPath, err := url.JoinPath(bonsai.ReleaseAPIBasePath, targetReleaseSlug)
 	s.NoError(err, "successfully resolved path")
 
-	s.serveMux.HandleFunc(urlPath, func(w http.ResponseWriter, _ *http.Request) {
+	s.serveMux.Get(urlPath, func(w http.ResponseWriter, _ *http.Request) {
 		respStr := fmt.Sprintf(`
 		{
 			"name": "Elasticsearch 7.2.0",
