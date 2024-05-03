@@ -323,6 +323,7 @@ type Client struct {
 
 	// Clients
 	Space SpaceClient
+	Plan  PlanClient
 }
 
 func NewClient(options ...ClientOption) *Client {
@@ -341,6 +342,7 @@ func NewClient(options ...ClientOption) *Client {
 
 	// Configure child clients
 	client.Space = SpaceClient{client}
+	client.Plan = PlanClient{client}
 
 	return client
 }
@@ -453,10 +455,12 @@ func (c *Client) doRequest(ctx context.Context, req *http.Request, reqBuf *bytes
 		}
 	}
 
+	// All error reposes should come with a JSON response per the Error handling
+	// section @ https://bonsai.io/docs/introduction-to-the-api.
 	if resp.StatusCode >= http.StatusBadRequest {
 		respErr := ResponseError{}
 		if err = json.Unmarshal(resp.BodyBuf.Bytes(), &respErr); err != nil {
-			return resp, fmt.Errorf("unmarshalling error response: %w", err)
+			return resp, fmt.Errorf("unmarshaling error response: %w", err)
 		}
 		return resp, respErr
 	}
