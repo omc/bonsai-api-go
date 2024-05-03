@@ -19,28 +19,34 @@ const (
 //
 // It differs from Plan namely in that the AvailableReleases returned is
 // a list of string, not Release.
+//
+// Indeed, it exists to resolve differences between index list response and
+// other response structures.
 type planAllResponse struct {
 	// Represents a machine-readable name for the plan.
-	Slug string `json:"slug"`
+	Slug string `json:"slug,omitempty"`
 	// Represents the human-readable name of the plan.
-	Name string `json:"name"`
+	Name string `json:"name,omitempty"`
 	// Represents the plan price in cents.
-	PriceInCents int64 `json:"price_in_cents"`
+	PriceInCents int64 `json:"price_in_cents,omitempty"`
 	// Represents the plan billing interval in months.
-	BillingIntervalInMonths int `json:"billing_interval_in_months"`
+	BillingIntervalInMonths int `json:"billing_interval_in_months,omitempty"`
 	// Indicates whether the plan is single-tenant or not. A value of false
 	// indicates the Cluster will share hardware with other Clusters. Single
 	// tenant environments can be reached via the public Internet.
-	SingleTenant bool `json:"single_tenant"`
+	SingleTenant bool `json:"single_tenant,omitempty"`
 	// Indicates whether the plan is on a publicly addressable network.
 	// Private plans provide environments that cannot be reached by the public
 	// Internet. A VPC connection will be needed to communicate with a private
 	// cluster.
-	PrivateNetwork bool `json:"private_network"`
+	PrivateNetwork bool `json:"private_network,omitempty"`
 	// A collection of search release slugs available for the plan. Additional
 	// information about a release can be retrieved from the Releases API.
 	AvailableReleases []string `json:"available_releases"`
 	AvailableSpaces   []string `json:"available_spaces"`
+
+	// A URI to retrieve more information about this Plan.
+	URI string `json:"uri,omitempty"`
 }
 
 type planAllResponseList struct {
@@ -68,6 +74,7 @@ func (c *planAllResponseConverter) Convert(source planAllResponse) Plan {
 	for i, space := range source.AvailableSpaces {
 		plan.AvailableSpaces[i] = Space{Path: space}
 	}
+	plan.URI = source.URI
 
 	return plan
 }
@@ -90,24 +97,27 @@ type Plan struct {
 	// Represents a machine-readable name for the plan.
 	Slug string `json:"slug"`
 	// Represents the human-readable name of the plan.
-	Name string `json:"name"`
+	Name string `json:"name,omitempty"`
 	// Represents the plan price in cents.
-	PriceInCents int64 `json:"price_in_cents"`
+	PriceInCents int64 `json:"price_in_cents,omitempty"`
 	// Represents the plan billing interval in months.
-	BillingIntervalInMonths int `json:"billing_interval_months"`
+	BillingIntervalInMonths int `json:"billing_interval_months,omitempty"`
 	// Indicates whether the plan is single-tenant or not. A value of false
 	// indicates the Cluster will share hardware with other Clusters. Single
 	// tenant environments can be reached via the public Internet.
-	SingleTenant bool `json:"single_tenant"`
+	SingleTenant bool `json:"single_tenant,omitempty"`
 	// Indicates whether the plan is on a publicly addressable network.
 	// Private plans provide environments that cannot be reached by the public
 	// Internet. A VPC connection will be needed to communicate with a private
 	// cluster.
-	PrivateNetwork bool `json:"private_network"`
+	PrivateNetwork bool `json:"private_network,omitempty"`
 	// A collection of search release slugs available for the plan. Additional
 	// information about a release can be retrieved from the Releases API.
 	AvailableReleases []Release `json:"available_releases"`
 	AvailableSpaces   []Space   `json:"available_spaces"`
+
+	// A URI to retrieve more information about this Plan.
+	URI string `json:"uri,omitempty"`
 }
 
 func (p *Plan) UnmarshalJSON(data []byte) error {

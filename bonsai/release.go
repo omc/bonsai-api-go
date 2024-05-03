@@ -15,16 +15,21 @@ const ReleaseAPIBasePath = "/releases"
 // Release is a placeholder for now.
 type Release struct {
 	Name        string `json:"name,omitempty"`
-	Slug        string `json:"slug"`
+	Slug        string `json:"slug,omitempty"`
 	ServiceType string `json:"service_type,omitempty"`
 	Version     string `json:"version,omitempty"`
 	MultiTenant bool   `json:"multitenant,omitempty"`
+
+	// A URI to retrieve more information about this Release.
+	URI string `json:"uri,omitempty"`
+	// PackageName is the package name of the release.
+	PackageName string `json:"package_name,omitempty"`
 }
 
 // ReleasesResultList is a wrapper around a slice of
 // Releases for json unmarshaling.
 type ReleasesResultList struct {
-	Releases []Release `json:"releases"`
+	Releases []Release `json:"releases,omitempty"`
 }
 
 // ReleaseClient is a client for the Releases API.

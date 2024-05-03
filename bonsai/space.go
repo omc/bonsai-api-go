@@ -26,13 +26,18 @@ type CloudProvider struct {
 type Space struct {
 	Path           string        `json:"path"`
 	PrivateNetwork bool          `json:"private_network"`
-	Cloud          CloudProvider `json:"cloud"`
+	Cloud          CloudProvider `json:"cloud,omitempty"`
+
+	// The geographic region in which the cluster is running.
+	Region string `json:"region,omitempty"`
+	// A URI to retrieve more information about this Release.
+	URI string `json:"uri,omitempty"`
 }
 
 // SpacesResultList is a wrapper around a slice of
 // Spaces for json unmarshaling.
 type SpacesResultList struct {
-	Spaces []Space `json:"spaces"`
+	Spaces []Space `json:"spaces,omitempty"`
 }
 
 // SpaceClient is a client for the Spaces API.
