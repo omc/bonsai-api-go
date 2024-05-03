@@ -325,6 +325,7 @@ type Client struct {
 	Space   SpaceClient
 	Plan    PlanClient
 	Release ReleaseClient
+	Cluster ClusterClient
 }
 
 func NewClient(options ...ClientOption) *Client {
@@ -345,6 +346,7 @@ func NewClient(options ...ClientOption) *Client {
 	client.Space = SpaceClient{client}
 	client.Plan = PlanClient{client}
 	client.Release = ReleaseClient{client}
+	client.Cluster = ClusterClient{client}
 
 	return client
 }

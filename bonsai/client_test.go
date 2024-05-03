@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/omc/bonsai-api-go/v1/bonsai"
 )
 
@@ -34,7 +35,7 @@ type ClientTestSuite struct {
 	suite.Suite
 
 	// serveMux is the request multiplexer used for tests
-	serveMux *http.ServeMux
+	serveMux *chi.Mux
 	// server is the testing server on some local port
 	server *httptest.Server
 	// client allows each test to have a reachable *bonsai.Client for testing
@@ -43,7 +44,7 @@ type ClientTestSuite struct {
 
 func (s *ClientTestSuite) SetupSuite() {
 	// Configure http client and other miscellany
-	s.serveMux = http.NewServeMux()
+	s.serveMux = chi.NewRouter()
 	s.server = httptest.NewServer(s.serveMux)
 	token, err := bonsai.NewToken("TestToken")
 	if err != nil {
