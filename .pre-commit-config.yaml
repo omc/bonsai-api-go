@@ -1,0 +1,16 @@
+repos:
+  - repo: https://github.com/golangci/golangci-lint
+    rev: v1.57.2
+    hooks:
+      - id: golangci-lint-full
+  - repo: local
+    hooks:
+      - id: go-licenses-save
+        name: go-licenses-save
+        description: Discover and save 3rd party dependency licenses
+        entry: go-licenses save ./... --save_path="doc/3rd-party-deps" --ignore github.com/omc --force
+        types: [ go ]
+        language: golang
+        require_serial: true
+        pass_filenames: false
+        files: ^go\.(mod|sum)$
