@@ -123,6 +123,7 @@ func (c *SpaceClient) All(ctx context.Context) ([]Space, error) {
 	return allResults, err
 }
 
+//nolint:dupl // Allow duplicated code blocks in code paths that may change
 func (c *SpaceClient) GetByPath(ctx context.Context, spacePath string) (Space, error) {
 	var (
 		req    *http.Request
