@@ -127,9 +127,6 @@ func (s *ClientTestSuite) TestClientResponseError() {
 func (s *ClientTestSuite) TestClientResponseWithPagination() {
 	s.serveMux.Get("/clusters", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("RateLimit-Limit", "1000")
-		w.Header().Set("RateLimit-Remaining", "999")
-		w.Header().Set("RateLimit-Reset", "1511954577")
 		w.WriteHeader(http.StatusOK)
 		_, err := fmt.Fprint(w, `
 			{
