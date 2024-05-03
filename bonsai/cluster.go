@@ -136,6 +136,24 @@ type ClusterClient struct {
 	*Client
 }
 
+// Do performs an HTTP request against the API, with any required
+// Cluster-specific configuration/limitations - for example, rate limiting.
+func (c *ClusterClient) Do(ctx context.Context, req *http.Request) (*Response, error) {
+	// Allow non-provisioning Cluster endpoint requests to continue
+	if req.Method != http.MethodPost {
+		return c.Client.Do(ctx, req)
+	}
+
+	// Limit provision requests
+	err := c.rateLimiter.provisionLimiter.Wait(ctx)
+	if err != nil {
+		// Context canceled, timed-out, burst issue, or other rate limit issue;
+		// let the callers handle it.
+		return nil, fmt.Errorf("failed while awaiting execution per rate-limit: %w", err)
+	}
+	return c.Client.Do(ctx, req)
+}
+
 type ClusterAllOpts struct {
 	// Optional. A query string for filtering matching clusters.
 	// This currently works on name.
