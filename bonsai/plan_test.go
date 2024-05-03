@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/omc/bonsai-api-go/v1/bonsai"
 )
 
@@ -114,7 +113,7 @@ func (s *ClientTestSuite) TestPlanClient_All() {
 	s.NoError(err, "successfully get all spaces")
 	s.Len(spaces, 2)
 
-	s.Empty(cmp.Diff(expect, spaces), "diff between received All response and expected should be empty")
+	s.ElementsMatch(expect, spaces, "elements expected match elements in received spaces")
 }
 
 func (s *ClientTestSuite) TestPlanClient_GetByPath() {
@@ -175,5 +174,5 @@ func (s *ClientTestSuite) TestPlanClient_GetByPath() {
 	resultResp, err := s.client.Plan.GetBySlug(context.Background(), "sandbox-aws-us-east-1")
 	s.NoError(err, "successfully get space by path")
 
-	s.Empty(cmp.Diff(expect, resultResp), "diff between received plan response and expected should be empty")
+	s.Equal(expect, resultResp, "expected struct matches unmarshaled result")
 }

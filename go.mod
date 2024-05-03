@@ -3,7 +3,6 @@ module github.com/omc/bonsai-api-go/v1
 go 1.22
 
 require (
-	github.com/google/go-cmp v0.6.0
 	github.com/hetznercloud/hcloud-go/v2 v2.7.2
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/net v0.24.0

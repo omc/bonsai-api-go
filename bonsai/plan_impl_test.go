@@ -2,8 +2,6 @@ package bonsai
 
 import (
 	"encoding/json"
-
-	"github.com/google/go-cmp/cmp"
 )
 
 func (s *ClientImplTestSuite) TestPlanAllResponseJsonUnmarshal() {
@@ -64,8 +62,7 @@ func (s *ClientImplTestSuite) TestPlanAllResponseJsonUnmarshal() {
 			result := planAllResponse{}
 			err := json.Unmarshal([]byte(tc.received), &result)
 			s.NoError(err)
-			s.Equal(tc.expect, result)
-			s.Empty(cmp.Diff(result, tc.expect))
+			s.Equal(tc.expect, result, "expected struct matches unmarshaled result")
 		})
 	}
 }
