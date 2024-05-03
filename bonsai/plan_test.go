@@ -10,7 +10,7 @@ import (
 )
 
 func (s *ClientTestSuite) TestPlanClient_All() {
-	s.serveMux.HandleFunc(bonsai.PlanAPIBasePath, func(w http.ResponseWriter, _ *http.Request) {
+	s.serveMux.Get(bonsai.PlanAPIBasePath, func(w http.ResponseWriter, _ *http.Request) {
 		respStr := `
 		{
 		"plans": [
@@ -145,7 +145,7 @@ func (s *ClientTestSuite) TestPlanClient_GetByPath() {
 		}
 		`, targetPlanPath)
 
-	s.serveMux.HandleFunc(urlPath, func(w http.ResponseWriter, _ *http.Request) {
+	s.serveMux.Get(urlPath, func(w http.ResponseWriter, _ *http.Request) {
 		_, err = w.Write([]byte(respStr))
 		s.NoError(err, "wrote response string to writer")
 	})

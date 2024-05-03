@@ -11,7 +11,7 @@ import (
 )
 
 func (s *ClientTestSuite) TestSpaceClient_All() {
-	s.serveMux.HandleFunc(bonsai.SpaceAPIBasePath, func(w http.ResponseWriter, _ *http.Request) {
+	s.serveMux.Get(bonsai.SpaceAPIBasePath, func(w http.ResponseWriter, _ *http.Request) {
 		respStr := `
 			{
 			  "spaces": [
@@ -64,7 +64,7 @@ func (s *ClientTestSuite) TestSpaceClient_GetByPath() {
 	urlPath, err := url.JoinPath(bonsai.SpaceAPIBasePath, targetSpacePath)
 	s.NoError(err, "successfully create url path")
 
-	s.serveMux.HandleFunc(urlPath, func(w http.ResponseWriter, _ *http.Request) {
+	s.serveMux.Get(urlPath, func(w http.ResponseWriter, _ *http.Request) {
 		respStr := fmt.Sprintf(`
 			{
 			    "path": "%s",
