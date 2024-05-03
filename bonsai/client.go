@@ -252,6 +252,10 @@ type Response struct {
 	PaginatedResponse `json:"pagination"`
 }
 
+func (r *Response) isJSON() bool {
+	return r.Header.Get("Content-Type") == HTTPContentTypeJSON
+}
+
 // WithHTTPResponse assigns an *http.Response to a *Response item
 // and reads its response body into the *Response.
 func (r *Response) WithHTTPResponse(httpResp *http.Response) error {
@@ -451,22 +455,30 @@ func (c *Client) doRequest(ctx context.Context, req *http.Request, reqBuf *bytes
 		return resp, fmt.Errorf("setting http response: %w", err)
 	}
 
+	// All error reposes should come with a JSON response per the Error handling
+	// section @ https://bonsai.io/docs/introduction-to-the-api.
+	//
+	// That said, in the scenario that an error *isn't* returned as a JSON body
+	// response, it would be jarring to receive a message about an internal
+	// unmarshaling attempt, rather than to receive the HTTP Status Error
+	if resp.StatusCode >= http.StatusBadRequest {
+		respErr := ResponseError{Status: resp.StatusCode}
+
+		if ok := resp.isJSON(); ok {
+			// Suppress unmarshaling errors in the event that the response didn't
+			// contain a message.
+			_ = json.Unmarshal(resp.BodyBuf.Bytes(), &respErr)
+		}
+
+		return resp, respErr
+	}
+
 	// Extract the pagination details
-	if httpResp.Header.Get("Content-Type") == HTTPContentTypeJSON {
+	if resp.isJSON() {
 		err = json.Unmarshal(resp.BodyBuf.Bytes(), &resp)
 		if err != nil {
 			return resp, fmt.Errorf("error unmarshaling response body for pagination: %w", err)
 		}
-	}
-
-	// All error reposes should come with a JSON response per the Error handling
-	// section @ https://bonsai.io/docs/introduction-to-the-api.
-	if resp.StatusCode >= http.StatusBadRequest {
-		respErr := ResponseError{}
-		if err = json.Unmarshal(resp.BodyBuf.Bytes(), &respErr); err != nil {
-			return resp, fmt.Errorf("unmarshaling error response: %w", err)
-		}
-		return resp, respErr
 	}
 
 	return resp, err
