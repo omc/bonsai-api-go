@@ -1,4 +1,4 @@
-# bonsai-go: Bonsai Cloud Go API Client
+# bonsai-api-go: Bonsai Cloud Go API Client
 
 ## Installation
 
