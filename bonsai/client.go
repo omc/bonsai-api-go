@@ -322,8 +322,9 @@ type Client struct {
 	userAgent   string
 
 	// Clients
-	Space SpaceClient
-	Plan  PlanClient
+	Space   SpaceClient
+	Plan    PlanClient
+	Release ReleaseClient
 }
 
 func NewClient(options ...ClientOption) *Client {
@@ -343,6 +344,7 @@ func NewClient(options ...ClientOption) *Client {
 	// Configure child clients
 	client.Space = SpaceClient{client}
 	client.Plan = PlanClient{client}
+	client.Release = ReleaseClient{client}
 
 	return client
 }
