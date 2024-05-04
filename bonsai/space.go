@@ -115,7 +115,7 @@ func (c *SpaceClient) All(ctx context.Context) ([]Space, error) {
 		}
 
 		allResults = append(allResults, listResults...)
-		if len(allResults) >= resp.PageSize {
+		if len(allResults) >= resp.TotalRecords {
 			resp.MarkPaginationComplete()
 		}
 		return resp, err
