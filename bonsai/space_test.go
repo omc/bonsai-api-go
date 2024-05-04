@@ -10,7 +10,9 @@ import (
 	"github.com/omc/bonsai-api-go/v1/bonsai"
 )
 
-func (s *ClientTestSuite) TestSpaceClient_All() {
+// Mocked Tests
+
+func (s *ClientMockTestSuite) TestSpaceClient_All() {
 	s.serveMux.Get(bonsai.SpaceAPIBasePath, func(w http.ResponseWriter, _ *http.Request) {
 		respStr := `
 			{
@@ -58,7 +60,7 @@ func (s *ClientTestSuite) TestSpaceClient_All() {
 	s.Len(spaces, 3)
 }
 
-func (s *ClientTestSuite) TestSpaceClient_GetByPath() {
+func (s *ClientMockTestSuite) TestSpaceClient_GetByPath() {
 	const targetSpacePath = "omc/bonsai/us-east-1/common"
 
 	urlPath, err := url.JoinPath(bonsai.SpaceAPIBasePath, targetSpacePath)
@@ -93,4 +95,21 @@ func (s *ClientTestSuite) TestSpaceClient_GetByPath() {
 	s.Equal(space.PrivateNetwork, false)
 	s.Equal(space.Cloud.Provider, "aws")
 	s.Equal(space.Cloud.Region, "aws-us-east-1")
+}
+
+// VCR Tests.
+func (s *ClientVCRTestSuite) TestSpaceClient_All() {
+	ctx := context.Background()
+
+	spaces, err := s.client.Space.All(ctx)
+	s.NoError(err, "successfully get all spaces")
+	assertGolden(s, spaces)
+}
+
+func (s *ClientVCRTestSuite) TestSpaceClient_GetByPath() {
+	ctx := context.Background()
+
+	space, err := s.client.Space.GetByPath(ctx, "omc/bonsai/eu-west-1/common")
+	s.NoError(err, "successfully get space")
+	assertGolden(s, space)
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/omc/bonsai-api-go/v1/bonsai"
 )
 
-func (s *ClientTestSuite) TestPlanClient_All() {
+func (s *ClientMockTestSuite) TestPlanClient_All() {
 	s.serveMux.Get(bonsai.PlanAPIBasePath, func(w http.ResponseWriter, _ *http.Request) {
 		respStr := `
 		{
@@ -109,14 +109,14 @@ func (s *ClientTestSuite) TestPlanClient_All() {
 			},
 		},
 	}
-	spaces, err := s.client.Plan.All(context.Background())
-	s.NoError(err, "successfully get all spaces")
-	s.Len(spaces, 2)
+	plans, err := s.client.Plan.All(context.Background())
+	s.NoError(err, "successfully get all plans")
+	s.Len(plans, 2)
 
-	s.ElementsMatch(expect, spaces, "elements expected match elements in received spaces")
+	s.ElementsMatch(expect, plans, "elements expected match elements in received plans")
 }
 
-func (s *ClientTestSuite) TestPlanClient_GetByPath() {
+func (s *ClientMockTestSuite) TestPlanClient_GetByPath() {
 	const targetPlanPath = "sandbox-aws-us-east-1"
 
 	urlPath, err := url.JoinPath(bonsai.PlanAPIBasePath, "sandbox-aws-us-east-1")
@@ -172,7 +172,24 @@ func (s *ClientTestSuite) TestPlanClient_GetByPath() {
 	}
 
 	resultResp, err := s.client.Plan.GetBySlug(context.Background(), "sandbox-aws-us-east-1")
-	s.NoError(err, "successfully get space by path")
+	s.NoError(err, "successfully get plan by path")
 
 	s.Equal(expect, resultResp, "expected struct matches unmarshaled result")
+}
+
+// VCR Tests.
+func (s *ClientVCRTestSuite) TestPlanClient_All() {
+	ctx := context.Background()
+
+	plans, err := s.client.Plan.All(ctx)
+	s.NoError(err, "successfully get all plans")
+	assertGolden(s, plans)
+}
+
+func (s *ClientVCRTestSuite) TestPlanClient_GetByPath() {
+	ctx := context.Background()
+
+	plan, err := s.client.Plan.GetBySlug(ctx, "standard-micro-aws-us-east-1")
+	s.NoError(err, "successfully get plan")
+	assertGolden(s, plan)
 }

@@ -1,0 +1,4 @@
+{
+  "message": "Your cluster is being deprovisioned.",
+  "monitor": "https://api.bonsai.io/clusters/bonsai-api-go-9994392953"
+ }
