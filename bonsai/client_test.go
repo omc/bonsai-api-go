@@ -7,10 +7,16 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
+	"reflect"
+	"regexp"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"gopkg.in/dnaeon/go-vcr.v3/cassette"
+	"gopkg.in/dnaeon/go-vcr.v3/recorder"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/omc/bonsai-api-go/v1/bonsai"
@@ -42,24 +48,179 @@ type ClientTestSuite struct {
 	client *bonsai.Client
 }
 
-func (s *ClientTestSuite) SetupSuite() {
+// ClientMockTestSuite is used for all requests against data
+// either live from an API endpoint, or saved as a fixture from
+// those same endpoints.
+type ClientVCRTestSuite struct {
+	recordMode           recorder.Mode
+	recorder             *recorder.Recorder
+	recorderUpdateRegexp *regexp.Regexp
+	fileNormalizer       *regexp.Regexp
+	ClientTestSuite
+}
+
+func (s *ClientVCRTestSuite) ReadOnlyRun() bool {
+	return s.recordMode == recorder.ModePassthrough
+}
+func (s *ClientVCRTestSuite) WillRecord() bool {
+	return !s.ReadOnlyRun()
+}
+
+func (s *ClientVCRTestSuite) SetRecorderMode(mode string) {
+	switch mode {
+	case "REC_ONCE":
+		s.recordMode = recorder.ModeRecordOnce
+	case "REC_ONLY":
+		s.recordMode = recorder.ModeRecordOnly
+	case "REPLAY_WITH_NEW":
+		s.recordMode = recorder.ModeReplayWithNewEpisodes
+	default:
+		s.recordMode = recorder.ModePassthrough
+	}
+}
+
+func (s *ClientVCRTestSuite) SetupSuite() {
+	var err error
+
+	s.fileNormalizer = regexp.MustCompile("[^A-Za-z0-9-]+")
+
+	envVCRRecordMode := os.Getenv("BONSAI_REC_MODE")
+	// Passthrough if empty
+	s.SetRecorderMode(envVCRRecordMode)
+
+	if recordUpdateRegexpStr, ok := os.LookupEnv("BONSAI_REC_UPDATE_MATCHING"); ok {
+		s.recorderUpdateRegexp = regexp.MustCompile(recordUpdateRegexpStr)
+	}
+
+	envKey := os.Getenv("BONSAI_API_KEY")
+	envToken := os.Getenv("BONSAI_API_TOKEN")
+
+	accessKey, err := bonsai.NewAccessKey(envKey)
+	if err != nil {
+		log.Fatal(fmt.Errorf("invalid user received: %w", err))
+	}
+
+	accessToken, err := bonsai.NewAccessToken(envToken)
+	if err != nil {
+		log.Fatal(fmt.Errorf("invalid token/password received: %w", err))
+	}
+
+	credentialPair := bonsai.CredentialPair{
+		AccessKey:   accessKey,
+		AccessToken: accessToken,
+	}
+
+	// If we're not passing through, and we don't have a key, panic!
+	if s.WillRecord() && credentialPair.Empty() {
+		log.Panic("BONSAI_API_TOKEN environment variable not set for testing")
+	}
+
 	// Configure http client and other miscellany
 	s.serveMux = chi.NewRouter()
-	s.server = httptest.NewServer(s.serveMux)
-	token, err := bonsai.NewToken("TestToken")
-	if err != nil {
-		log.Fatal(fmt.Errorf("invalid token received: %w", err))
-	}
 	s.client = bonsai.NewClient(
-		bonsai.WithEndpoint(s.server.URL),
-		bonsai.WithToken(token),
+		bonsai.WithApplication(
+			bonsai.Application{
+				Name:    "bonsai-api-go",
+				Version: "v1",
+			},
+		),
+		bonsai.WithCredentialPair(
+			credentialPair,
+		),
 	)
 
 	// configure testify
 	s.Assertions = require.New(s.T())
 }
 
-func (s *ClientTestSuite) TestResponseErrorUnmarshallJson() {
+func (s *ClientVCRTestSuite) BeforeTest(_, testName string) {
+	var err error
+
+	if s.WillRecord() {
+		s.recorder, err = recorder.NewWithOptions(
+			&recorder.Options{
+				// filepath is os agnostic
+				CassetteName:       filepath.Join("fixtures/golden/", s.normalize(testName)),
+				Mode:               s.recordMode,
+				RealTransport:      s.client.Transport(),
+				SkipRequestLatency: true,
+			},
+		)
+		if err != nil {
+			log.Fatalf("failed to create new recorder: %+v\n", err)
+		}
+
+		// Add a hook which removes Authorization headers from all requests
+		hook := func(i *cassette.Interaction) error {
+			delete(i.Request.Headers, "Authorization")
+			return nil
+		}
+		s.recorder.AddHook(hook, recorder.AfterCaptureHook)
+	}
+}
+
+func (s *ClientVCRTestSuite) AfterTest(_, _ string) {
+	if s.recorder != nil && s.recorder.IsRecording() {
+		if err := s.recorder.Stop(); err != nil {
+			log.Fatalf("error stopping recorder: %v", err)
+		}
+	}
+}
+
+func (s *ClientVCRTestSuite) TearDownSuite() {
+
+}
+
+func (s *ClientVCRTestSuite) update(name string) bool {
+	if s.ReadOnlyRun() {
+		return false
+	}
+
+	if reflect.ValueOf(s.recorderUpdateRegexp).IsZero() {
+		return true
+	}
+
+	return s.recorderUpdateRegexp.MatchString(name)
+}
+
+func (s *ClientVCRTestSuite) normalize(path string) string {
+	return s.fileNormalizer.ReplaceAllLiteralString(path, "-")
+}
+
+func TestClientVCRTestSuite(t *testing.T) {
+	if _, ok := os.LookupEnv("BONSAI_RUN_INTEGRATION_TESTS"); ok {
+		suite.Run(t, new(ClientVCRTestSuite))
+	}
+}
+
+// ClientMockTestSuite is used for all mocked web requests.
+type ClientMockTestSuite struct {
+	ClientTestSuite
+}
+
+func (s *ClientMockTestSuite) SetupSuite() {
+	// Configure http client and other miscellany
+	s.serveMux = chi.NewRouter()
+	s.server = httptest.NewServer(s.serveMux)
+
+	s.client = bonsai.NewClient(
+		bonsai.WithEndpoint(s.server.URL),
+		bonsai.WithCredentialPair(
+			bonsai.CredentialPair{
+				AccessKey:   bonsai.AccessKey("TestKey"),
+				AccessToken: bonsai.AccessToken("TestToken"),
+			},
+		),
+	)
+	// configure testify
+	s.Assertions = require.New(s.T())
+}
+
+func TestClientMockTestSuite(t *testing.T) {
+	suite.Run(t, new(ClientMockTestSuite))
+}
+
+func (s *ClientMockTestSuite) TestResponseErrorUnmarshallJson() {
 	testCases := []struct {
 		name     string
 		received string
@@ -95,7 +256,7 @@ func (s *ClientTestSuite) TestResponseErrorUnmarshallJson() {
 	}
 }
 
-func (s *ClientTestSuite) TestClientResponseError() {
+func (s *ClientMockTestSuite) TestClientResponseError() {
 	const p = "/clusters/doesnotexist-1234"
 
 	// Configure Servemux to serve the error response at this path
@@ -124,9 +285,9 @@ func (s *ClientTestSuite) TestClientResponseError() {
 	s.ErrorIs(err, bonsai.ErrHTTPStatusNotFound, "ResponseError is comparable to bonsai.ErrorHttpResponseStatus")
 }
 
-func (s *ClientTestSuite) TestClientResponseWithPagination() {
+func (s *ClientMockTestSuite) TestClientResponseWithPagination() {
 	s.serveMux.Get("/clusters", func(w http.ResponseWriter, _ *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", bonsai.HTTPContentTypeJSON)
 		w.WriteHeader(http.StatusOK)
 		_, err := fmt.Fprint(w, `
 			{
@@ -152,7 +313,7 @@ func (s *ClientTestSuite) TestClientResponseWithPagination() {
 	s.Equal(255, resp.PaginatedResponse.TotalRecords)
 }
 
-func (s *ClientTestSuite) TestClient_WithApplication() {
+func (s *ClientMockTestSuite) TestClient_WithApplication() {
 	testCases := []struct {
 		name     string
 		received bonsai.Application
@@ -189,8 +350,4 @@ func (s *ClientTestSuite) TestClient_WithApplication() {
 			s.Equal(tc.expect, c.UserAgent())
 		})
 	}
-}
-
-func TestClientTestSuite(t *testing.T) {
-	suite.Run(t, new(ClientTestSuite))
 }

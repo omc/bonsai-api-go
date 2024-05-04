@@ -192,7 +192,7 @@ func (o ClusterCreateOpts) Valid() error {
 type ClusterUpdateOpts struct {
 	// Required. A String representing the name for the new cluster.
 	Name string `json:"name"`
-	// The slug of the Plan that the new cluster will be configured for.
+	// Required. The slug of the Plan that the new cluster will be configured for.
 	// Use the [PlanClient.All] method to view a list of all Plans available.
 	Plan string `json:"plan,omitempty"`
 }
@@ -297,7 +297,7 @@ func (c *ClusterClient) All(ctx context.Context) ([]Cluster, error) {
 		}
 
 		allResults = append(allResults, listResults...)
-		if len(allResults) >= resp.PageSize {
+		if len(allResults) >= resp.TotalRecords {
 			resp.MarkPaginationComplete()
 		}
 		return resp, err
@@ -348,7 +348,7 @@ func (c *ClusterClient) GetBySlug(ctx context.Context, slug string) (Cluster, er
 
 // Create requests a new Cluster to be created.
 //
-//nolint:dupl // Allow duplicated code blocks in code paths that may change
+
 func (c *ClusterClient) Create(ctx context.Context, opt ClusterCreateOpts) (
 	ClustersResultCreate,
 	error,
@@ -396,8 +396,8 @@ func (c *ClusterClient) Create(ctx context.Context, opt ClusterCreateOpts) (
 
 // Update requests a new Cluster be updated.
 //
-//nolint:dupl // Allow duplicated code blocks in code paths that may change
-func (c *ClusterClient) Update(ctx context.Context, opt ClusterUpdateOpts) (
+
+func (c *ClusterClient) Update(ctx context.Context, slug string, opt ClusterUpdateOpts) (
 	ClustersResultUpdate,
 	error,
 ) {
@@ -415,6 +415,7 @@ func (c *ClusterClient) Update(ctx context.Context, opt ClusterUpdateOpts) (
 	if err != nil {
 		return result, fmt.Errorf("cannot parse relative url from basepath (%s): %w", ClusterAPIBasePath, err)
 	}
+	reqURL.Path = path.Join(reqURL.Path, slug)
 
 	if err = opt.Valid(); err != nil {
 		return result, fmt.Errorf("invalid create options (%v): %w", opt, err)

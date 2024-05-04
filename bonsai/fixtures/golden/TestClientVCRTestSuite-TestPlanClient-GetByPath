@@ -1,0 +1,94 @@
+{
+  "slug": "standard-micro-aws-us-east-1",
+  "name": "Standard Micro",
+  "price_in_cents": 2000,
+  "billing_interval_months": 1,
+  "available_releases": [
+   {
+    "slug": "elasticsearch-5.6.16"
+   },
+   {
+    "slug": "elasticsearch-6.8.21"
+   },
+   {
+    "slug": "elasticsearch-7.10.2"
+   },
+   {
+    "slug": "opensearch-2.6.0-mt"
+   }
+  ],
+  "available_spaces": [
+   {
+    "path": "omc/bonsai-gcp/us-east4/common",
+    "private_network": false,
+    "cloud": {
+     "provider": "",
+     "region": ""
+    }
+   },
+   {
+    "path": "omc/bonsai-gcp/us-west1/common",
+    "private_network": false,
+    "cloud": {
+     "provider": "",
+     "region": ""
+    }
+   },
+   {
+    "path": "omc/bonsai/ap-northeast-1/common",
+    "private_network": false,
+    "cloud": {
+     "provider": "",
+     "region": ""
+    }
+   },
+   {
+    "path": "omc/bonsai/ap-southeast-2/common",
+    "private_network": false,
+    "cloud": {
+     "provider": "",
+     "region": ""
+    }
+   },
+   {
+    "path": "omc/bonsai/eu-central-1/common",
+    "private_network": false,
+    "cloud": {
+     "provider": "",
+     "region": ""
+    }
+   },
+   {
+    "path": "omc/bonsai/eu-west-1/common",
+    "private_network": false,
+    "cloud": {
+     "provider": "",
+     "region": ""
+    }
+   },
+   {
+    "path": "omc/bonsai/us-east-1/common",
+    "private_network": false,
+    "cloud": {
+     "provider": "",
+     "region": ""
+    }
+   },
+   {
+    "path": "omc/bonsai/us-west-2/common",
+    "private_network": false,
+    "cloud": {
+     "provider": "",
+     "region": ""
+    }
+   },
+   {
+    "path": "omc/websolr/us-east-1/common",
+    "private_network": false,
+    "cloud": {
+     "provider": "",
+     "region": ""
+    }
+   }
+  ]
+ }

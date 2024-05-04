@@ -10,7 +10,7 @@ import (
 	"github.com/omc/bonsai-api-go/v1/bonsai"
 )
 
-func (s *ClientTestSuite) TestReleaseClient_All() {
+func (s *ClientMockTestSuite) TestReleaseClient_All() {
 	s.serveMux.Get(bonsai.ReleaseAPIBasePath, func(w http.ResponseWriter, _ *http.Request) {
 		respStr := `
 		{
@@ -78,7 +78,7 @@ func (s *ClientTestSuite) TestReleaseClient_All() {
 	s.ElementsMatch(expect, releases, "elements in expect match elements in received releases")
 }
 
-func (s *ClientTestSuite) TestReleaseClient_GetBySlug() {
+func (s *ClientMockTestSuite) TestReleaseClient_GetBySlug() {
 	const targetReleaseSlug = "elasticsearch-7.2.0"
 
 	urlPath, err := url.JoinPath(bonsai.ReleaseAPIBasePath, targetReleaseSlug)
@@ -97,10 +97,10 @@ func (s *ClientTestSuite) TestReleaseClient_GetBySlug() {
 
 		resp := &bonsai.Release{}
 		err = json.Unmarshal([]byte(respStr), resp)
-		s.NoError(err, "unmarshals json into bonsai.Space")
+		s.NoError(err, "unmarshals json into bonsai.Release")
 
 		err = json.NewEncoder(w).Encode(resp)
-		s.NoError(err, "encodes bonsai.Space into json on the writer")
+		s.NoError(err, "encodes bonsai.Release into json on the writer")
 	})
 
 	expect := bonsai.Release{
@@ -115,4 +115,21 @@ func (s *ClientTestSuite) TestReleaseClient_GetBySlug() {
 	s.NoError(err, "successfully get release by path")
 
 	s.Equal(expect, resultResp, "elements in expect match elements in received release response")
+}
+
+// VCR Tests.
+func (s *ClientVCRTestSuite) TestReleaseClient_All() {
+	ctx := context.Background()
+
+	spaces, err := s.client.Release.All(ctx)
+	s.NoError(err, "successfully get all spaces")
+	assertGolden(s, spaces)
+}
+
+func (s *ClientVCRTestSuite) TestReleaseClient_GetByPath() {
+	ctx := context.Background()
+
+	space, err := s.client.Release.GetBySlug(ctx, "opensearch-2.6.0-mt")
+	s.NoError(err, "successfully get space")
+	assertGolden(s, space)
 }

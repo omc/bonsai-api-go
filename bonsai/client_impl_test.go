@@ -37,13 +37,25 @@ func (s *ClientImplTestSuite) SetupSuite() {
 	// Configure http client and other miscellany
 	s.serveMux = chi.NewRouter()
 	s.server = httptest.NewServer(s.serveMux)
-	token, err := NewToken("TestToken")
+
+	user, err := NewAccessKey("TestUser")
 	if err != nil {
-		log.Fatal(fmt.Errorf("invalid token received: %w", err))
+		log.Fatal(fmt.Errorf("invalid user received: %w", err))
 	}
+
+	password, err := NewAccessToken("TestToken")
+	if err != nil {
+		log.Fatal(fmt.Errorf("invalid token/password received: %w", err))
+	}
+
 	s.client = NewClient(
 		WithEndpoint(s.server.URL),
-		WithToken(token),
+		WithCredentialPair(
+			CredentialPair{
+				AccessKey:   user,
+				AccessToken: password,
+			},
+		),
 	)
 
 	// configure testify

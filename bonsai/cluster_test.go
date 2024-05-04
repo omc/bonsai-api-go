@@ -10,7 +10,7 @@ import (
 	"github.com/omc/bonsai-api-go/v1/bonsai"
 )
 
-func (s *ClientTestSuite) TestClusterClient_All() {
+func (s *ClientMockTestSuite) TestClusterClient_All() {
 	s.serveMux.Get(bonsai.ClusterAPIBasePath, func(w http.ResponseWriter, _ *http.Request) {
 		respStr := `
 		{	
@@ -246,7 +246,7 @@ func (s *ClientTestSuite) TestClusterClient_All() {
 	}
 }
 
-func (s *ClientTestSuite) TestClusterClient_GetBySlug() {
+func (s *ClientMockTestSuite) TestClusterClient_GetBySlug() {
 	const targetClusterSlug = "second-testing-clust-1234567890"
 
 	urlPath, err := url.JoinPath(bonsai.ClusterAPIBasePath, targetClusterSlug)
@@ -337,7 +337,7 @@ func (s *ClientTestSuite) TestClusterClient_GetBySlug() {
 	s.Equal(expect, resultResp, "elements in expect match elements in received cluster response")
 }
 
-func (s *ClientTestSuite) TestClusterClient_Create() {
+func (s *ClientMockTestSuite) TestClusterClient_Create() {
 	s.serveMux.Post(bonsai.ClusterAPIBasePath, func(w http.ResponseWriter, _ *http.Request) {
 		respStr := `
 			{
@@ -387,8 +387,13 @@ func (s *ClientTestSuite) TestClusterClient_Create() {
 	s.Equal(expect, resultResp, "elements in expect match elements in received cluster create response")
 }
 
-func (s *ClientTestSuite) TestClusterClient_Update() {
-	s.serveMux.Put(bonsai.ClusterAPIBasePath, func(w http.ResponseWriter, _ *http.Request) {
+func (s *ClientMockTestSuite) TestClusterClient_Update() {
+	const targetClusterSlug = "second-testing-clust-1234567890"
+
+	urlPath, err := url.JoinPath(bonsai.ClusterAPIBasePath, targetClusterSlug)
+	s.NoError(err, "successfully resolved path")
+
+	s.serveMux.Put(urlPath, func(w http.ResponseWriter, _ *http.Request) {
 		respStr := `
 		{
 			"message": "Your cluster is being updated.",
@@ -398,7 +403,7 @@ func (s *ClientTestSuite) TestClusterClient_Update() {
 		`
 
 		resp := &bonsai.ClustersResultUpdate{}
-		err := json.Unmarshal([]byte(respStr), resp)
+		err = json.Unmarshal([]byte(respStr), resp)
 		s.NoError(err, "unmarshals json into bonsai.ClustersResultUpdate")
 
 		err = json.NewEncoder(w).Encode(resp)
@@ -410,7 +415,7 @@ func (s *ClientTestSuite) TestClusterClient_Update() {
 		Monitor: "https://api.bonsai.io/clusters/test-5-x-3968320296",
 	}
 
-	resultResp, err := s.client.Cluster.Update(context.Background(), bonsai.ClusterUpdateOpts{
+	resultResp, err := s.client.Cluster.Update(context.Background(), targetClusterSlug, bonsai.ClusterUpdateOpts{
 		Name: "test-5-x-3968320296",
 		Plan: "sandbox-aws-us-east-2",
 	})
@@ -419,7 +424,7 @@ func (s *ClientTestSuite) TestClusterClient_Update() {
 	s.Equal(expect, resultResp, "items in expect match items in received cluster update response")
 }
 
-func (s *ClientTestSuite) TestClusterClient_Delete() {
+func (s *ClientMockTestSuite) TestClusterClient_Delete() {
 	const targetClusterSlug = "second-testing-clust-1234567890"
 
 	reqPath, err := url.JoinPath(bonsai.ClusterAPIBasePath, targetClusterSlug)
@@ -451,4 +456,53 @@ func (s *ClientTestSuite) TestClusterClient_Delete() {
 	s.NoError(err, "successfully execute create cluster request")
 
 	s.Equal(expect, resultResp, "items in expect match items in received cluster update response")
+}
+
+// VCR Tests.
+func (s *ClientVCRTestSuite) TestClusterClient_All() {
+	ctx := context.Background()
+
+	plans, err := s.client.Cluster.All(ctx)
+	s.NoError(err, "successfully get all clusters")
+	assertGolden(s, plans)
+}
+
+func (s *ClientVCRTestSuite) TestClusterClient_GetBySlug() {
+	ctx := context.Background()
+
+	plan, err := s.client.Cluster.GetBySlug(ctx, "dcek-group-llc-5240651189")
+	s.NoError(err, "successfully get cluster")
+	assertGolden(s, plan)
+}
+
+func (s *ClientVCRTestSuite) TestClusterClient_Create() {
+	ctx := context.Background()
+
+	plan, err := s.client.Cluster.Create(ctx, bonsai.ClusterCreateOpts{
+		Name:    "bonsai-api-go-test-cluster",
+		Plan:    "standard-nano-comped",
+		Space:   "omc/bonsai/us-east-1/common",
+		Release: "opensearch-2.6.0-mt",
+	})
+	s.NoError(err, "successfully get cluster")
+	assertGolden(s, plan)
+}
+
+func (s *ClientVCRTestSuite) TestClusterClient_Update() {
+	ctx := context.Background()
+
+	plan, err := s.client.Cluster.Update(ctx, "bonsai-api-go-9994392953", bonsai.ClusterUpdateOpts{
+		Name: "bonsai-api-go-test-cluster-updated",
+		Plan: "standard-nano-comped",
+	})
+	s.NoError(err, "successfully get cluster")
+	assertGolden(s, plan)
+}
+
+func (s *ClientVCRTestSuite) TestClusterClient_Delete() {
+	ctx := context.Background()
+
+	plan, err := s.client.Cluster.Destroy(ctx, "bonsai-api-go-9994392953")
+	s.NoError(err, "successfully get cluster")
+	assertGolden(s, plan)
 }

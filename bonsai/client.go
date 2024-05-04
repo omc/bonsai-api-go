@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -24,7 +25,7 @@ const (
 	Version = "1.0.0"
 	// BaseEndpoint is the target API URL base location.
 	BaseEndpoint = "https://api.bonsai.io"
-	// UserAgent is the internally used value for the User-Agent header
+	// UserAgent is the internally used value for the AccessKey-Agent header
 	// in all outgoing HTTP requests.
 	UserAgent = "bonsai-api-go/" + Version
 )
@@ -72,6 +73,8 @@ var (
 	ErrHTTPStatusUnauthorized        = errors.New("unauthorized")
 	ErrHTTPStatusTooManyRequests     = errors.New("too many requests")
 )
+
+var contentTypeRegexp = regexp.MustCompile(fmt.Sprintf("^%s.*", HTTPContentTypeJSON))
 
 // ResponseError captures API response errors
 // returned as JSON in supported scenarios.
@@ -170,28 +173,54 @@ func (app Application) String() string {
 	}
 }
 
-type Token struct {
-	string
-}
+type Credential string
 
-func (t Token) Empty() bool {
-	return t.string == ""
-}
+type AccessKey Credential
 
-func (t Token) NotEmpty() bool {
-	return !t.Empty()
-}
-
-func NewToken(token string) (Token, error) {
-	t := Token{token}
-	if ok := t.validHTTPValue(); !ok {
-		return Token{}, errors.New("invalid token")
+// NewAccessKey is a convenience method for verifying
+// that access keys intended to be used with the API are valid HTTP header values.
+func NewAccessKey(user string) (AccessKey, error) {
+	if ok := Credential(user).validHTTPValue(); !ok {
+		return AccessKey(""), errors.New("invalid user")
 	}
-	return t, nil
+	return AccessKey(user), nil
 }
 
-func (t Token) validHTTPValue() bool {
-	return httpguts.ValidHeaderFieldValue(t.string)
+type AccessToken Credential
+
+// NewAccessToken is a convenience method for verifying
+// that access tokens intended to be used with the API are valid HTTP
+// header values.
+func NewAccessToken(password string) (AccessToken, error) {
+	if ok := Credential(password).validHTTPValue(); !ok {
+		return AccessToken(""), errors.New("invalid password")
+	}
+	return AccessToken(password), nil
+}
+
+func (c Credential) Empty() bool {
+	return c == ""
+}
+
+func (c Credential) NotEmpty() bool {
+	return !c.Empty()
+}
+
+func (c Credential) validHTTPValue() bool {
+	return httpguts.ValidHeaderFieldValue(string(c))
+}
+
+type CredentialPair struct {
+	AccessKey
+	AccessToken
+}
+
+func (c CredentialPair) Empty() bool {
+	return reflect.ValueOf(c).IsZero()
+}
+
+func (c CredentialPair) NotEmpty() bool {
+	return !c.Empty()
 }
 
 // ClientOption is a functional option, used to configure Client.
@@ -204,15 +233,16 @@ func WithEndpoint(endpoint string) ClientOption {
 	}
 }
 
-// WithToken configures a Client to use the specified token for authentication.
-func WithToken(token Token) ClientOption {
+// WithCredentialPair configures a Client to use
+// the specified username for Basic authorization.
+func WithCredentialPair(pair CredentialPair) ClientOption {
 	return func(c *Client) {
-		c.token = token
+		c.credentialPair = pair
 	}
 }
 
 // WithApplication configures the client to represent itself as
-// a particular Application by modifying the User-Agent header
+// a particular Application by modifying the AccessKey-Agent header
 // sent in all requests.
 func WithApplication(app Application) ClientOption {
 	return func(c *Client) {
@@ -239,6 +269,15 @@ func WithProvisionRateLimit(l *rate.Limiter) ClientOption {
 	}
 }
 
+// WithHTTPTransport configures the Client's HTTP Transport, such that
+// "the mechanism by which individual HTTP requests are made" can be
+// overridden.
+func WithHTTPTransport(t http.RoundTripper) ClientOption {
+	return func(c *Client) {
+		c.httpClient.Transport = t
+	}
+}
+
 type PaginatedResponse struct {
 	PageNumber   int `json:"page_number"`
 	PageSize     int `json:"page_size"`
@@ -253,7 +292,7 @@ type Response struct {
 }
 
 func (r *Response) isJSON() bool {
-	return r.Header.Get("Content-Type") == HTTPContentTypeJSON
+	return contentTypeRegexp.MatchString(r.Header.Get("Content-Type"))
 }
 
 // WithHTTPResponse assigns an *http.Response to a *Response item
@@ -320,10 +359,10 @@ type ClientLimiter struct {
 type Client struct {
 	httpClient *http.Client
 
-	rateLimiter *ClientLimiter
-	endpoint    string
-	token       Token
-	userAgent   string
+	rateLimiter    *ClientLimiter
+	endpoint       string
+	credentialPair CredentialPair
+	userAgent      string
 
 	// Clients
 	Space   SpaceClient
@@ -355,6 +394,16 @@ func NewClient(options ...ClientOption) *Client {
 	return client
 }
 
+// Transport returns the HTTP transport used by the Client to make requests.
+func (c *Client) Transport() http.RoundTripper {
+	return c.httpClient.Transport
+}
+
+// Transport returns the HTTP transport used by the Client to make requests.
+func (c *Client) SetTransport(t http.RoundTripper) {
+	c.httpClient.Transport = t
+}
+
 func (c *Client) UserAgent() string {
 	return c.userAgent
 }
@@ -363,19 +412,25 @@ func (c *Client) UserAgent() string {
 // is assigned with ctx and has all necessary headers set (auth, user agent, etc.).
 func (c *Client) NewRequest(ctx context.Context, method, path string, body io.Reader) (*http.Request, error) {
 	reqURL := c.endpoint + path
-	req, err := http.NewRequest(method, reqURL, body)
+	req, err := http.NewRequestWithContext(ctx, method, reqURL, body)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to create new request: %w", err)
 	}
 	req.Header.Set("User-Agent", c.userAgent)
 
-	if c.token.NotEmpty() {
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.token))
+	if c.credentialPair.NotEmpty() {
+		req.SetBasicAuth(
+			string(c.credentialPair.AccessKey),
+			string(c.credentialPair.AccessToken),
+		)
+
+		if _, _, ok := req.BasicAuth(); !ok {
+			return nil, errors.New("invalid credentials")
+		}
 	}
 
-	if body != nil {
-		req.Header.Set("Content-Type", "application/json")
-	}
+	req.Header.Set("Content-Type", HTTPContentTypeJSON)
+	req.Header.Set("Accept", HTTPContentTypeJSON)
 
 	req = req.WithContext(ctx)
 
@@ -403,6 +458,7 @@ func (c *Client) Do(ctx context.Context, req *http.Request) (*Response, error) {
 	for {
 		respErr := &ResponseError{}
 		resp, err := c.doRequest(ctx, req, reqBuf)
+
 		switch {
 		case errors.As(err, respErr):
 			if reflect.ValueOf(respErr).IsZero() {
@@ -436,9 +492,6 @@ func (c *Client) doRequest(ctx context.Context, req *http.Request, reqBuf *bytes
 	}
 
 	httpResp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("http request failed: %w", err)
-	}
 	defer func() { err = IoClose(httpResp.Body, err) }()
 
 	if httpResp == nil {
