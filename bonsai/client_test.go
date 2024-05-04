@@ -60,7 +60,7 @@ type ClientVCRTestSuite struct {
 }
 
 func (s *ClientVCRTestSuite) ReadOnlyRun() bool {
-	return s.recordMode == recorder.ModePassthrough
+	return s.recordMode == recorder.ModeReplayOnly
 }
 func (s *ClientVCRTestSuite) WillRecord() bool {
 	return !s.ReadOnlyRun()
@@ -72,10 +72,14 @@ func (s *ClientVCRTestSuite) SetRecorderMode(mode string) {
 		s.recordMode = recorder.ModeRecordOnce
 	case "REC_ONLY":
 		s.recordMode = recorder.ModeRecordOnly
+	case "REPLAY_ONLY":
+		s.recordMode = recorder.ModeReplayOnly
 	case "REPLAY_WITH_NEW":
 		s.recordMode = recorder.ModeReplayWithNewEpisodes
-	default:
+	case "PASS_THROUGH":
 		s.recordMode = recorder.ModePassthrough
+	default:
+		s.recordMode = recorder.ModeReplayOnly
 	}
 }
 
@@ -136,26 +140,34 @@ func (s *ClientVCRTestSuite) SetupSuite() {
 func (s *ClientVCRTestSuite) BeforeTest(_, testName string) {
 	var err error
 
-	if s.WillRecord() {
-		s.recorder, err = recorder.NewWithOptions(
-			&recorder.Options{
-				// filepath is os agnostic
-				CassetteName:       filepath.Join("fixtures/golden/", s.normalize(testName)),
-				Mode:               s.recordMode,
-				RealTransport:      s.client.Transport(),
-				SkipRequestLatency: true,
-			},
-		)
-		if err != nil {
-			log.Fatalf("failed to create new recorder: %+v\n", err)
-		}
+	s.recorder, err = recorder.NewWithOptions(
+		&recorder.Options{
+			// filepath is os agnostic
+			CassetteName:       filepath.Join("fixtures/vcr/", s.normalize(testName)),
+			Mode:               s.recordMode,
+			SkipRequestLatency: true,
+		},
+	)
 
+	if err != nil {
+		log.Fatalf("failed to create new recorder: %+v\n", err)
+	}
+
+	if s.WillRecord() {
 		// Add a hook which removes Authorization headers from all requests
 		hook := func(i *cassette.Interaction) error {
 			delete(i.Request.Headers, "Authorization")
 			return nil
 		}
 		s.recorder.AddHook(hook, recorder.AfterCaptureHook)
+
+		// Remove headers that might include secrets.
+		s.recorder.AddHook(riskyHeaderFilter, recorder.AfterCaptureHook)
+
+		s.client.SetTransport(s.recorder)
+	} else {
+		s.recorder.SetReplayableInteractions(true)
+		s.client.SetTransport(s.recorder)
 	}
 }
 
@@ -188,9 +200,7 @@ func (s *ClientVCRTestSuite) normalize(path string) string {
 }
 
 func TestClientVCRTestSuite(t *testing.T) {
-	if _, ok := os.LookupEnv("BONSAI_RUN_INTEGRATION_TESTS"); ok {
-		suite.Run(t, new(ClientVCRTestSuite))
-	}
+	suite.Run(t, new(ClientVCRTestSuite))
 }
 
 // ClientMockTestSuite is used for all mocked web requests.

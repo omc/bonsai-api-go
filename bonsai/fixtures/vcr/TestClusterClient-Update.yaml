@@ -1,0 +1,143 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 75
+        transfer_encoding: []
+        trailer: {}
+        host: api.bonsai.io
+        remote_addr: ""
+        request_uri: ""
+        body: '{"name":"bonsai-api-go-test-cluster-updated","plan":"standard-nano-comped"}'
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+            User-Agent:
+                - bonsai-api-go/v1 bonsai-api-go/1.0.0
+        url: https://api.bonsai.io/clusters/bonsai-api-go-9994392953
+        method: PUT
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        transfer_encoding:
+            - chunked
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"errors":["This cluster is no longer active and cannot be modified. Solution: Please select a different cluster.","Your request could not be processed. "],"status":422}'
+        headers:
+            Cache-Control:
+                - no-cache
+            Connection:
+                - keep-alive
+            Content-Security-Policy:
+                - 'default-src ''self'' https:; font-src ''self'' https: data:; img-src ''self'' https: data:; object-src ''none''; script-src ''self'' https: ''unsafe-inline''; style-src ''self'' https: ''unsafe-inline''; connect-src ''self'' http: wss://*.bonsaisearch.net'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Sat, 04 May 2024 11:42:50 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Server:
+                - Cowboy
+            Strict-Transport-Security:
+                - max-age=63072000; includeSubDomains
+            Vary:
+                - Accept,Accept-Encoding
+            Via:
+                - 1.1 vegur
+            X-Content-Type-Options:
+                - nosniff
+            X-Download-Options:
+                - noopen
+            X-Frame-Options:
+                - SAMEORIGIN
+            X-Permitted-Cross-Domain-Policies:
+                - none
+            X-Request-Id:
+                - 67072137-6c4a-4c65-966e-2a8ea65d9668
+            X-Runtime:
+                - "0.043148"
+            X-Xss-Protection:
+                - 1; mode=block
+        status: 422 Unprocessable Entity
+        code: 422
+        duration: 73.4967ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 75
+        transfer_encoding: []
+        trailer: {}
+        host: api.bonsai.io
+        remote_addr: ""
+        request_uri: ""
+        body: '{"name":"bonsai-api-go-test-cluster-updated","plan":"standard-nano-comped"}'
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+            User-Agent:
+                - bonsai-api-go/v1 bonsai-api-go/1.0.0
+        url: https://api.bonsai.io/clusters/bonsai-api-go-2471463249
+        method: PUT
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        transfer_encoding:
+            - chunked
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"message":"Your cluster is being updated.","monitor":"https://api.bonsai.io/clusters/bonsai-api-go-2471463249","status":202}'
+        headers:
+            Cache-Control:
+                - no-cache
+            Connection:
+                - keep-alive
+            Content-Security-Policy:
+                - 'default-src ''self'' https:; font-src ''self'' https: data:; img-src ''self'' https: data:; object-src ''none''; script-src ''self'' https: ''unsafe-inline''; style-src ''self'' https: ''unsafe-inline''; connect-src ''self'' http: wss://*.bonsaisearch.net'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Sat, 04 May 2024 11:43:53 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Server:
+                - Cowboy
+            Strict-Transport-Security:
+                - max-age=63072000; includeSubDomains
+            Vary:
+                - Accept,Accept-Encoding
+            Via:
+                - 1.1 vegur
+            X-Content-Type-Options:
+                - nosniff
+            X-Download-Options:
+                - noopen
+            X-Frame-Options:
+                - SAMEORIGIN
+            X-Permitted-Cross-Domain-Policies:
+                - none
+            X-Request-Id:
+                - c95dcfbe-00c0-4dcc-a600-f366362c4073
+            X-Runtime:
+                - "0.126076"
+            X-Xss-Protection:
+                - 1; mode=block
+        status: 202 Accepted
+        code: 202
+        duration: 310.9072ms
