@@ -231,7 +231,7 @@ func (c *PlanClient) All(ctx context.Context) ([]Plan, error) {
 		}
 
 		allResults = append(allResults, listResults...)
-		if len(allResults) >= resp.PageSize {
+		if len(allResults) >= resp.TotalRecords {
 			resp.MarkPaginationComplete()
 		}
 		return resp, err
