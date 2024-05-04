@@ -6,8 +6,6 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
-
-	"github.com/omc/bonsai-api-go/v1/bonsai"
 )
 
 func init() {
@@ -39,7 +37,7 @@ func initLogger() {
 
 func assertGolden(s *ClientVCRTestSuite, expected any) {
 	s.T().Helper()
-	bonsai.AssertGolden(
+	AssertGolden(
 		s.T(),
 		filepath.Join("fixtures/golden/", s.normalize(s.T().Name())),
 		s.update(s.T().Name()),
