@@ -188,7 +188,9 @@ func (s *ClientVCRTestSuite) normalize(path string) string {
 }
 
 func TestClientVCRTestSuite(t *testing.T) {
-	suite.Run(t, new(ClientVCRTestSuite))
+	if _, ok := os.LookupEnv("BONSAI_RUN_INTEGRATION_TESTS"); ok {
+		suite.Run(t, new(ClientVCRTestSuite))
+	}
 }
 
 // ClientMockTestSuite is used for all mocked web requests.
