@@ -24,7 +24,7 @@ Full documentation is available on godoc at https://pkg.go.dev/github.com/omc/bo
 ## Installation
 
 ```shell
-go get github.com/omc/bonsai-api-go/v1
+go get github.com/omc/bonsai-api-go/bonsai
 ```
 
 ## Example
@@ -34,27 +34,33 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
+	"os"
 
-	"github.com/omc/bonsai-api-go/v1/bonsai"
+	"github.com/omc/bonsai-api-go/bonsai"
 )
 
 func main() {
-	token, err := bonsai.NewToken("TestToken")
-	if err != nil {
-		log.Fatal(fmt.Errorf("invalid token: %w", err))
-	}
-	
+	// Fetch API Key and Token from environment variables
+	apiKey := os.Getenv("BONSAI_API_KEY")
+	apiToken := os.Getenv("BONSAI_API_TOKEN")
+
+	// Create a new Bonsai API Client
 	client := bonsai.NewClient(
-		bonsai.WithToken(token),
+		bonsai.WithCredentialPair(
+			bonsai.CredentialPair{
+				AccessKey:   bonsai.AccessKey(apiKey),
+				AccessToken: bonsai.AccessToken(apiToken),
+			},
+		),
 	)
 
-	clusters, _, err := client.Clusters.All(context.Background())
+	// Fetch all of our clusters
+	clusters, err := client.Cluster.All(context.Background())
 	if err != nil {
 		log.Fatalf("error listing clusters: %s\n", err)
 	}
-	log.Printf("Found %d clusters!\n", len(clusters))
+	log.Printf("Found %d clusters! Details: %v\n", len(clusters), clusters)
 }
 ```
 
