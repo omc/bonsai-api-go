@@ -1,0 +1,8 @@
+{
+  "name": "OpenSearch 2.6.0",
+  "slug": "opensearch-2.6.0-mt",
+  "service_type": "opensearch",
+  "version": "2.6.0",
+  "multitenant": true,
+  "package_name": "2.6.0-mt"
+ }

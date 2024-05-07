@@ -1,0 +1,75 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: api.bonsai.io
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+            User-Agent:
+                - bonsai-api-go/v1 bonsai-api-go/1.0.0
+        url: https://api.bonsai.io/plans/standard-micro-aws-us-east-1
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        transfer_encoding:
+            - chunked
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"slug":"standard-micro-aws-us-east-1","name":"Standard Micro","price_in_cents":2000,"billing_interval_in_months":1,"single_tenant":false,"private_network":false,"available_releases":["elasticsearch-5.6.16","elasticsearch-6.8.21","elasticsearch-7.10.2","opensearch-2.6.0-mt"],"available_spaces":["omc/bonsai-gcp/us-east4/common","omc/bonsai-gcp/us-west1/common","omc/bonsai/ap-northeast-1/common","omc/bonsai/ap-southeast-2/common","omc/bonsai/eu-central-1/common","omc/bonsai/eu-west-1/common","omc/bonsai/us-east-1/common","omc/bonsai/us-west-2/common","omc/websolr/us-east-1/common"]}'
+        headers:
+            Cache-Control:
+                - max-age=0, private, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Security-Policy:
+                - 'default-src ''self'' https:; font-src ''self'' https: data:; img-src ''self'' https: data:; object-src ''none''; script-src ''self'' https: ''unsafe-inline''; style-src ''self'' https: ''unsafe-inline''; connect-src ''self'' http: wss://*.bonsaisearch.net'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Sat, 04 May 2024 11:45:18 GMT
+            Etag:
+                - W/"b4359d6cf7e2ba32b5676a1136f6c033"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Server:
+                - Cowboy
+            Strict-Transport-Security:
+                - max-age=63072000; includeSubDomains
+            Vary:
+                - Accept,Accept-Encoding
+            Via:
+                - 1.1 vegur
+            X-Content-Type-Options:
+                - nosniff
+            X-Download-Options:
+                - noopen
+            X-Frame-Options:
+                - SAMEORIGIN
+            X-Permitted-Cross-Domain-Policies:
+                - none
+            X-Request-Id:
+                - 2ddf841d-7b51-4dce-934b-3e67818e497a
+            X-Runtime:
+                - "0.034832"
+            X-Xss-Protection:
+                - 1; mode=block
+        status: 200 OK
+        code: 200
+        duration: 285.9613ms

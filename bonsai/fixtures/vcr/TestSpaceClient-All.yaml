@@ -1,0 +1,75 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: api.bonsai.io
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+            User-Agent:
+                - bonsai-api-go/v1 bonsai-api-go/1.0.0
+        url: https://api.bonsai.io/spaces
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        transfer_encoding:
+            - chunked
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"spaces":[{"path":"omc/bonsai/eu-west-1/common","private_network":false,"cloud":{"provider":"aws","region":"aws-eu-west-1"}},{"path":"omc/bonsai/ap-southeast-2/common","private_network":false,"cloud":{"provider":"aws","region":"aws-ap-southeast-2"}},{"path":"omc/bonsai/eu-central-1/common","private_network":false,"cloud":{"provider":"aws","region":"aws-eu-central-1"}},{"path":"omc/bonsai/us-east-1/common","private_network":false,"cloud":{"provider":"aws","region":"aws-us-east-1"}},{"path":"omc/bonsai-gcp/us-west1/common","private_network":false,"cloud":{"provider":"gcp","region":"gcp-us-west1"}},{"path":"omc/bonsai-gcp/us-east4/common","private_network":false,"cloud":{"provider":"gcp","region":"gcp-us-east4"}},{"path":"omc/bonsai/us-west-2/common","private_network":false,"cloud":{"provider":"aws","region":"aws-us-west-2"}},{"path":"omc/bonsai/ap-northeast-1/common","private_network":false,"cloud":{"provider":"aws","region":"aws-ap-northeast-1"}},{"path":"omc/websolr/us-east-1/common","private_network":false,"cloud":{"provider":"aws","region":"aws-us-east-1"}}]}'
+        headers:
+            Cache-Control:
+                - max-age=0, private, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Security-Policy:
+                - 'default-src ''self'' https:; font-src ''self'' https: data:; img-src ''self'' https: data:; object-src ''none''; script-src ''self'' https: ''unsafe-inline''; style-src ''self'' https: ''unsafe-inline''; connect-src ''self'' http: wss://*.bonsaisearch.net'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Sat, 04 May 2024 11:44:54 GMT
+            Etag:
+                - W/"9ba8925afc58e91e133d9a2003ae88ed"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Server:
+                - Cowboy
+            Strict-Transport-Security:
+                - max-age=63072000; includeSubDomains
+            Vary:
+                - Accept,Accept-Encoding
+            Via:
+                - 1.1 vegur
+            X-Content-Type-Options:
+                - nosniff
+            X-Download-Options:
+                - noopen
+            X-Frame-Options:
+                - SAMEORIGIN
+            X-Permitted-Cross-Domain-Policies:
+                - none
+            X-Request-Id:
+                - abf6205a-c77e-4784-8137-85dd7d034836
+            X-Runtime:
+                - "0.182905"
+            X-Xss-Protection:
+                - 1; mode=block
+        status: 200 OK
+        code: 200
+        duration: 434.5154ms

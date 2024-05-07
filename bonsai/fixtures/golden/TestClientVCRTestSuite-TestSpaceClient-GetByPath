@@ -1,0 +1,8 @@
+{
+  "path": "omc/bonsai/eu-west-1/common",
+  "private_network": false,
+  "cloud": {
+   "provider": "aws",
+   "region": "aws-eu-west-1"
+  }
+ }

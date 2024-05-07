@@ -1,0 +1,26 @@
+{
+  "slug": "",
+  "name": "",
+  "uri": "",
+  "plan": {
+   "slug": "",
+   "available_releases": null,
+   "available_spaces": null
+  },
+  "release": {},
+  "space": {
+   "path": "",
+   "private_network": false,
+   "cloud": {
+    "provider": "",
+    "region": ""
+   }
+  },
+  "stats": {},
+  "access": {
+   "host": "",
+   "port": 0,
+   "scheme": ""
+  },
+  "state": ""
+ }

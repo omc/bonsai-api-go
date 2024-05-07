@@ -1,0 +1,1992 @@
+[
+  {
+   "slug": "standard-nano-comped",
+   "name": "Standard Nano",
+   "billing_interval_months": 1,
+   "available_releases": [
+    {
+     "slug": "elasticsearch-5.6.16"
+    },
+    {
+     "slug": "elasticsearch-6.8.21"
+    },
+    {
+     "slug": "elasticsearch-7.10.2"
+    },
+    {
+     "slug": "opensearch-2.6.0-mt"
+    }
+   ],
+   "available_spaces": [
+    {
+     "path": "omc/bonsai-gcp/us-east4/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai-gcp/us-west1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-northeast-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-southeast-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-central-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-west-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-west-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/websolr/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    }
+   ]
+  },
+  {
+   "slug": "sandbox-aws-us-east-1",
+   "name": "Sandbox",
+   "billing_interval_months": 1,
+   "available_releases": [
+    {
+     "slug": "elasticsearch-7.10.2"
+    },
+    {
+     "slug": "opensearch-2.6.0-mt"
+    }
+   ],
+   "available_spaces": [
+    {
+     "path": "omc/bonsai-gcp/us-east4/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai-gcp/us-west1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-northeast-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-southeast-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-central-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-west-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-west-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/websolr/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    }
+   ]
+  },
+  {
+   "slug": "standard-micro-aws-us-east-1",
+   "name": "Standard Micro",
+   "price_in_cents": 2000,
+   "billing_interval_months": 1,
+   "available_releases": [
+    {
+     "slug": "elasticsearch-5.6.16"
+    },
+    {
+     "slug": "elasticsearch-6.8.21"
+    },
+    {
+     "slug": "elasticsearch-7.10.2"
+    },
+    {
+     "slug": "opensearch-2.6.0-mt"
+    }
+   ],
+   "available_spaces": [
+    {
+     "path": "omc/bonsai-gcp/us-east4/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai-gcp/us-west1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-northeast-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-southeast-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-central-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-west-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-west-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/websolr/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    }
+   ]
+  },
+  {
+   "slug": "business-capacity-2x-aws-us-east-1",
+   "name": "Business Capacity 2X",
+   "price_in_cents": 200000,
+   "billing_interval_months": 1,
+   "single_tenant": true,
+   "available_releases": [
+    {
+     "slug": "elasticsearch-2.4.0"
+    },
+    {
+     "slug": "elasticsearch-5.6.16"
+    },
+    {
+     "slug": "elasticsearch-6.3.2"
+    },
+    {
+     "slug": "elasticsearch-6.4.2"
+    },
+    {
+     "slug": "elasticsearch-6.5.4"
+    },
+    {
+     "slug": "elasticsearch-6.8.17"
+    },
+    {
+     "slug": "elasticsearch-6.8.19"
+    },
+    {
+     "slug": "elasticsearch-6.8.21"
+    },
+    {
+     "slug": "elasticsearch-7.10.2"
+    },
+    {
+     "slug": "opensearch-1.2.4"
+    },
+    {
+     "slug": "opensearch-2.3.0"
+    },
+    {
+     "slug": "opensearch-2.6.0-mt"
+    }
+   ],
+   "available_spaces": [
+    {
+     "path": "omc/bonsai-gcp/us-east4/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai-gcp/us-west1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-northeast-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-southeast-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-central-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-west-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-west-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/websolr/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    }
+   ]
+  },
+  {
+   "slug": "business-performance-xl-aws-us-east-1",
+   "name": "Business Performance XL",
+   "price_in_cents": 95000,
+   "billing_interval_months": 1,
+   "single_tenant": true,
+   "available_releases": [
+    {
+     "slug": "elasticsearch-2.4.0"
+    },
+    {
+     "slug": "elasticsearch-5.6.16"
+    },
+    {
+     "slug": "elasticsearch-6.3.2"
+    },
+    {
+     "slug": "elasticsearch-6.4.2"
+    },
+    {
+     "slug": "elasticsearch-6.5.4"
+    },
+    {
+     "slug": "elasticsearch-6.8.17"
+    },
+    {
+     "slug": "elasticsearch-6.8.19"
+    },
+    {
+     "slug": "elasticsearch-6.8.21"
+    },
+    {
+     "slug": "elasticsearch-7.10.2"
+    },
+    {
+     "slug": "opensearch-1.2.4"
+    },
+    {
+     "slug": "opensearch-2.3.0"
+    },
+    {
+     "slug": "opensearch-2.6.0-mt"
+    }
+   ],
+   "available_spaces": [
+    {
+     "path": "omc/bonsai-gcp/us-east4/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai-gcp/us-west1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-northeast-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-southeast-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-central-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-west-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-west-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/websolr/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    }
+   ]
+  },
+  {
+   "slug": "business-performance-lg-aws-us-east-1",
+   "name": "Business Performance LG",
+   "price_in_cents": 70000,
+   "billing_interval_months": 1,
+   "single_tenant": true,
+   "available_releases": [
+    {
+     "slug": "elasticsearch-2.4.0"
+    },
+    {
+     "slug": "elasticsearch-5.6.16"
+    },
+    {
+     "slug": "elasticsearch-6.3.2"
+    },
+    {
+     "slug": "elasticsearch-6.4.2"
+    },
+    {
+     "slug": "elasticsearch-6.5.4"
+    },
+    {
+     "slug": "elasticsearch-6.8.17"
+    },
+    {
+     "slug": "elasticsearch-6.8.19"
+    },
+    {
+     "slug": "elasticsearch-6.8.21"
+    },
+    {
+     "slug": "elasticsearch-7.10.2"
+    },
+    {
+     "slug": "opensearch-1.2.4"
+    },
+    {
+     "slug": "opensearch-2.3.0"
+    },
+    {
+     "slug": "opensearch-2.6.0-mt"
+    }
+   ],
+   "available_spaces": [
+    {
+     "path": "omc/bonsai-gcp/us-east4/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai-gcp/us-west1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-northeast-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-southeast-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-central-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-west-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-west-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/websolr/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    }
+   ]
+  },
+  {
+   "slug": "standard-md-aws-us-east-1",
+   "name": "Standard MD",
+   "price_in_cents": 25000,
+   "billing_interval_months": 1,
+   "available_releases": [
+    {
+     "slug": "elasticsearch-5.6.16"
+    },
+    {
+     "slug": "elasticsearch-6.8.21"
+    },
+    {
+     "slug": "elasticsearch-7.10.2"
+    },
+    {
+     "slug": "opensearch-2.6.0-mt"
+    }
+   ],
+   "available_spaces": [
+    {
+     "path": "omc/bonsai-gcp/us-east4/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai-gcp/us-west1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-northeast-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-southeast-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-central-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-west-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-west-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/websolr/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    }
+   ]
+  },
+  {
+   "slug": "business-private-capacity-xl-aws-us-east-1",
+   "name": "Business Private Capacity XL",
+   "price_in_cents": 135000,
+   "billing_interval_months": 1,
+   "single_tenant": true,
+   "private_network": true,
+   "available_releases": [
+    {
+     "slug": "elasticsearch-2.4.0"
+    },
+    {
+     "slug": "elasticsearch-5.6.16"
+    },
+    {
+     "slug": "elasticsearch-6.3.2"
+    },
+    {
+     "slug": "elasticsearch-6.4.2"
+    },
+    {
+     "slug": "elasticsearch-6.5.4"
+    },
+    {
+     "slug": "elasticsearch-6.8.17"
+    },
+    {
+     "slug": "elasticsearch-6.8.19"
+    },
+    {
+     "slug": "elasticsearch-6.8.21"
+    },
+    {
+     "slug": "elasticsearch-7.10.2"
+    },
+    {
+     "slug": "opensearch-1.2.4"
+    },
+    {
+     "slug": "opensearch-2.3.0"
+    },
+    {
+     "slug": "opensearch-2.6.0-mt"
+    }
+   ],
+   "available_spaces": [
+    {
+     "path": "omc/bonsai-gcp/us-east4/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai-gcp/us-west1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-northeast-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-southeast-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-central-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-west-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-west-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/websolr/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    }
+   ]
+  },
+  {
+   "slug": "business-performance-2x-aws-us-east-1",
+   "name": "Business Performance 2X",
+   "price_in_cents": 140000,
+   "billing_interval_months": 1,
+   "single_tenant": true,
+   "available_releases": [
+    {
+     "slug": "elasticsearch-2.4.0"
+    },
+    {
+     "slug": "elasticsearch-5.6.16"
+    },
+    {
+     "slug": "elasticsearch-6.3.2"
+    },
+    {
+     "slug": "elasticsearch-6.4.2"
+    },
+    {
+     "slug": "elasticsearch-6.5.4"
+    },
+    {
+     "slug": "elasticsearch-6.8.17"
+    },
+    {
+     "slug": "elasticsearch-6.8.19"
+    },
+    {
+     "slug": "elasticsearch-6.8.21"
+    },
+    {
+     "slug": "elasticsearch-7.10.2"
+    },
+    {
+     "slug": "opensearch-1.2.4"
+    },
+    {
+     "slug": "opensearch-2.3.0"
+    },
+    {
+     "slug": "opensearch-2.6.0-mt"
+    }
+   ],
+   "available_spaces": [
+    {
+     "path": "omc/bonsai-gcp/us-east4/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai-gcp/us-west1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-northeast-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-southeast-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-central-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-west-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-west-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/websolr/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    }
+   ]
+  },
+  {
+   "slug": "business-private-capacity-2x-aws-us-east-1",
+   "name": "Business Private Capacity 2X",
+   "price_in_cents": 210000,
+   "billing_interval_months": 1,
+   "single_tenant": true,
+   "private_network": true,
+   "available_releases": [
+    {
+     "slug": "elasticsearch-2.4.0"
+    },
+    {
+     "slug": "elasticsearch-5.6.16"
+    },
+    {
+     "slug": "elasticsearch-6.3.2"
+    },
+    {
+     "slug": "elasticsearch-6.4.2"
+    },
+    {
+     "slug": "elasticsearch-6.5.4"
+    },
+    {
+     "slug": "elasticsearch-6.8.17"
+    },
+    {
+     "slug": "elasticsearch-6.8.19"
+    },
+    {
+     "slug": "elasticsearch-6.8.21"
+    },
+    {
+     "slug": "elasticsearch-7.10.2"
+    },
+    {
+     "slug": "opensearch-1.2.4"
+    },
+    {
+     "slug": "opensearch-2.3.0"
+    },
+    {
+     "slug": "opensearch-2.6.0-mt"
+    }
+   ],
+   "available_spaces": [
+    {
+     "path": "omc/bonsai-gcp/us-east4/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai-gcp/us-west1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-northeast-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-southeast-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-central-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-west-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-west-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/websolr/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    }
+   ]
+  },
+  {
+   "slug": "business-private-performance-lg-aws-us-east-1",
+   "name": "Business Private Performance LG",
+   "price_in_cents": 80000,
+   "billing_interval_months": 1,
+   "single_tenant": true,
+   "private_network": true,
+   "available_releases": [
+    {
+     "slug": "elasticsearch-2.4.0"
+    },
+    {
+     "slug": "elasticsearch-5.6.16"
+    },
+    {
+     "slug": "elasticsearch-6.3.2"
+    },
+    {
+     "slug": "elasticsearch-6.4.2"
+    },
+    {
+     "slug": "elasticsearch-6.5.4"
+    },
+    {
+     "slug": "elasticsearch-6.8.17"
+    },
+    {
+     "slug": "elasticsearch-6.8.19"
+    },
+    {
+     "slug": "elasticsearch-6.8.21"
+    },
+    {
+     "slug": "elasticsearch-7.10.2"
+    },
+    {
+     "slug": "opensearch-1.2.4"
+    },
+    {
+     "slug": "opensearch-2.3.0"
+    },
+    {
+     "slug": "opensearch-2.6.0-mt"
+    }
+   ],
+   "available_spaces": [
+    {
+     "path": "omc/bonsai-gcp/us-east4/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai-gcp/us-west1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-northeast-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-southeast-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-central-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-west-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-west-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/websolr/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    }
+   ]
+  },
+  {
+   "slug": "standard-nano-aws-us-east-1",
+   "name": "Standard Nano",
+   "price_in_cents": 5000,
+   "billing_interval_months": 1,
+   "available_releases": [
+    {
+     "slug": "elasticsearch-5.6.16"
+    },
+    {
+     "slug": "elasticsearch-6.8.21"
+    },
+    {
+     "slug": "elasticsearch-7.10.2"
+    },
+    {
+     "slug": "opensearch-2.6.0-mt"
+    }
+   ],
+   "available_spaces": [
+    {
+     "path": "omc/bonsai-gcp/us-east4/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai-gcp/us-west1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-northeast-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-southeast-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-central-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-west-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-west-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/websolr/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    }
+   ]
+  },
+  {
+   "slug": "business-private-capacity-lg-aws-us-east-1",
+   "name": "Business Private Capacity LG",
+   "price_in_cents": 95000,
+   "billing_interval_months": 1,
+   "single_tenant": true,
+   "private_network": true,
+   "available_releases": [
+    {
+     "slug": "elasticsearch-2.4.0"
+    },
+    {
+     "slug": "elasticsearch-5.6.16"
+    },
+    {
+     "slug": "elasticsearch-6.3.2"
+    },
+    {
+     "slug": "elasticsearch-6.4.2"
+    },
+    {
+     "slug": "elasticsearch-6.5.4"
+    },
+    {
+     "slug": "elasticsearch-6.8.17"
+    },
+    {
+     "slug": "elasticsearch-6.8.19"
+    },
+    {
+     "slug": "elasticsearch-6.8.21"
+    },
+    {
+     "slug": "elasticsearch-7.10.2"
+    },
+    {
+     "slug": "opensearch-1.2.4"
+    },
+    {
+     "slug": "opensearch-2.3.0"
+    },
+    {
+     "slug": "opensearch-2.6.0-mt"
+    }
+   ],
+   "available_spaces": [
+    {
+     "path": "omc/bonsai-gcp/us-east4/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai-gcp/us-west1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-northeast-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-southeast-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-central-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-west-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-west-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/websolr/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    }
+   ]
+  },
+  {
+   "slug": "business-capacity-xl-aws-us-east-1",
+   "name": "Business Capacity XL",
+   "price_in_cents": 125000,
+   "billing_interval_months": 1,
+   "single_tenant": true,
+   "available_releases": [
+    {
+     "slug": "elasticsearch-2.4.0"
+    },
+    {
+     "slug": "elasticsearch-5.6.16"
+    },
+    {
+     "slug": "elasticsearch-6.3.2"
+    },
+    {
+     "slug": "elasticsearch-6.4.2"
+    },
+    {
+     "slug": "elasticsearch-6.5.4"
+    },
+    {
+     "slug": "elasticsearch-6.8.17"
+    },
+    {
+     "slug": "elasticsearch-6.8.19"
+    },
+    {
+     "slug": "elasticsearch-6.8.21"
+    },
+    {
+     "slug": "elasticsearch-7.10.2"
+    },
+    {
+     "slug": "opensearch-1.2.4"
+    },
+    {
+     "slug": "opensearch-2.3.0"
+    },
+    {
+     "slug": "opensearch-2.6.0-mt"
+    }
+   ],
+   "available_spaces": [
+    {
+     "path": "omc/bonsai-gcp/us-east4/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai-gcp/us-west1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-northeast-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-southeast-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-central-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-west-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-west-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/websolr/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    }
+   ]
+  },
+  {
+   "slug": "business-private-performance-xl-aws-us-east-1",
+   "name": "Business Private Performance XL",
+   "price_in_cents": 105000,
+   "billing_interval_months": 1,
+   "single_tenant": true,
+   "private_network": true,
+   "available_releases": [
+    {
+     "slug": "elasticsearch-2.4.0"
+    },
+    {
+     "slug": "elasticsearch-5.6.16"
+    },
+    {
+     "slug": "elasticsearch-6.3.2"
+    },
+    {
+     "slug": "elasticsearch-6.4.2"
+    },
+    {
+     "slug": "elasticsearch-6.5.4"
+    },
+    {
+     "slug": "elasticsearch-6.8.17"
+    },
+    {
+     "slug": "elasticsearch-6.8.19"
+    },
+    {
+     "slug": "elasticsearch-6.8.21"
+    },
+    {
+     "slug": "elasticsearch-7.10.2"
+    },
+    {
+     "slug": "opensearch-1.2.4"
+    },
+    {
+     "slug": "opensearch-2.3.0"
+    },
+    {
+     "slug": "opensearch-2.6.0-mt"
+    }
+   ],
+   "available_spaces": [
+    {
+     "path": "omc/bonsai-gcp/us-east4/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai-gcp/us-west1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-northeast-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-southeast-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-central-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-west-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-west-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/websolr/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    }
+   ]
+  },
+  {
+   "slug": "standard-sm-aws-us-east-1",
+   "name": "Standard SM",
+   "price_in_cents": 15000,
+   "billing_interval_months": 1,
+   "available_releases": [
+    {
+     "slug": "elasticsearch-5.6.16"
+    },
+    {
+     "slug": "elasticsearch-6.8.21"
+    },
+    {
+     "slug": "elasticsearch-7.10.2"
+    },
+    {
+     "slug": "opensearch-2.6.0-mt"
+    }
+   ],
+   "available_spaces": [
+    {
+     "path": "omc/bonsai-gcp/us-east4/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai-gcp/us-west1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-northeast-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-southeast-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-central-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-west-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-west-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/websolr/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    }
+   ]
+  },
+  {
+   "slug": "business-capacity-lg-aws-us-east-1",
+   "name": "Business Capacity LG",
+   "price_in_cents": 85000,
+   "billing_interval_months": 1,
+   "single_tenant": true,
+   "available_releases": [
+    {
+     "slug": "elasticsearch-2.4.0"
+    },
+    {
+     "slug": "elasticsearch-5.6.16"
+    },
+    {
+     "slug": "elasticsearch-6.3.2"
+    },
+    {
+     "slug": "elasticsearch-6.4.2"
+    },
+    {
+     "slug": "elasticsearch-6.5.4"
+    },
+    {
+     "slug": "elasticsearch-6.8.17"
+    },
+    {
+     "slug": "elasticsearch-6.8.19"
+    },
+    {
+     "slug": "elasticsearch-6.8.21"
+    },
+    {
+     "slug": "elasticsearch-7.10.2"
+    },
+    {
+     "slug": "opensearch-1.2.4"
+    },
+    {
+     "slug": "opensearch-2.3.0"
+    },
+    {
+     "slug": "opensearch-2.6.0-mt"
+    }
+   ],
+   "available_spaces": [
+    {
+     "path": "omc/bonsai-gcp/us-east4/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai-gcp/us-west1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-northeast-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-southeast-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-central-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-west-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-west-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/websolr/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    }
+   ]
+  },
+  {
+   "slug": "business-private-performance-2x-aws-us-east-1",
+   "name": "Business Private Performance 2X",
+   "price_in_cents": 150000,
+   "billing_interval_months": 1,
+   "single_tenant": true,
+   "private_network": true,
+   "available_releases": [
+    {
+     "slug": "elasticsearch-2.4.0"
+    },
+    {
+     "slug": "elasticsearch-5.6.16"
+    },
+    {
+     "slug": "elasticsearch-6.3.2"
+    },
+    {
+     "slug": "elasticsearch-6.4.2"
+    },
+    {
+     "slug": "elasticsearch-6.5.4"
+    },
+    {
+     "slug": "elasticsearch-6.8.17"
+    },
+    {
+     "slug": "elasticsearch-6.8.19"
+    },
+    {
+     "slug": "elasticsearch-6.8.21"
+    },
+    {
+     "slug": "elasticsearch-7.10.2"
+    },
+    {
+     "slug": "opensearch-1.2.4"
+    },
+    {
+     "slug": "opensearch-2.3.0"
+    },
+    {
+     "slug": "opensearch-2.6.0-mt"
+    }
+   ],
+   "available_spaces": [
+    {
+     "path": "omc/bonsai-gcp/us-east4/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai-gcp/us-west1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-northeast-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/ap-southeast-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-central-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/eu-west-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/bonsai/us-west-2/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    },
+    {
+     "path": "omc/websolr/us-east-1/common",
+     "private_network": false,
+     "cloud": {
+      "provider": "",
+      "region": ""
+     }
+    }
+   ]
+  }
+ ]
