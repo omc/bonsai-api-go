@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/omc/bonsai-api-go/bonsai"
+	"github.com/omc/bonsai-api-go/v2/bonsai"
 )
 
 func main() {
