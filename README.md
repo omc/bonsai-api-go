@@ -24,7 +24,7 @@ Full documentation is available on godoc at https://pkg.go.dev/github.com/omc/bo
 ## Installation
 
 ```shell
-go get github.com/omc/bonsai-api-go/bonsai/v2
+go get github.com/omc/bonsai-api-go/v2/bonsai
 ```
 
 ## Example
@@ -37,7 +37,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/omc/bonsai-api-go/bonsai/v2"
+	"github.com/omc/bonsai-api-go/v2/bonsai"
 )
 
 func main() {
