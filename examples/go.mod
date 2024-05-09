@@ -2,7 +2,7 @@ module github.com/omc/bonsai-api-go/v2/example
 
 go 1.22.2
 
-require github.com/omc/bonsai-api-go/v2 v2.0.0-00010101000000-000000000000
+require github.com/omc/bonsai-api-go/v2 v2.1.0
 
 require (
 	github.com/google/go-querystring v1.1.0 // indirect
