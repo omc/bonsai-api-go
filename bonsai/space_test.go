@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/omc/bonsai-api-go/v1/bonsai"
+	"github.com/omc/bonsai-api-go/v2/bonsai"
 )
 
 // Mocked Tests

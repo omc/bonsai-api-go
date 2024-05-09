@@ -1,4 +1,4 @@
-module github.com/omc/bonsai-api-go/v1
+module github.com/omc/bonsai-api-go/v2
 
 go 1.22
 

@@ -19,7 +19,7 @@ import (
 	"gopkg.in/dnaeon/go-vcr.v3/recorder"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/omc/bonsai-api-go/v1/bonsai"
+	"github.com/omc/bonsai-api-go/v2/bonsai"
 )
 
 const (
@@ -125,7 +125,7 @@ func (s *ClientVCRTestSuite) SetupSuite() {
 		bonsai.WithApplication(
 			bonsai.Application{
 				Name:    "bonsai-api-go",
-				Version: "v1",
+				Version: "v2.0.0",
 			},
 		),
 		bonsai.WithCredentialPair(

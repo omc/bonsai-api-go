@@ -8,7 +8,7 @@ support of a search engineering team, but at a fraction of the cost!
 
 ## Documentation
 
-Full documentation is available on godoc at https://pkg.go.dev/github.com/omc/bonsai-api-go/v1/bonsai/
+Full documentation is available on godoc at https://pkg.go.dev/github.com/omc/bonsai-api-go/v2/bonsai/
 
 ### Self-hosting the docs
 
