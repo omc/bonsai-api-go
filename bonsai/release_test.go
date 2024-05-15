@@ -54,21 +54,21 @@ func (s *ClientMockTestSuite) TestReleaseClient_All() {
 			Slug:        "elasticsearch-5.6.16",
 			ServiceType: "elasticsearch",
 			Version:     "5.6.16",
-			MultiTenant: true,
+			MultiTenant: Pointer(true),
 		},
 		{
 			Name:        "Elasticsearch 6.5.4",
 			Slug:        "elasticsearch-6.5.4",
 			ServiceType: "elasticsearch",
 			Version:     "6.5.4",
-			MultiTenant: true,
+			MultiTenant: Pointer(true),
 		},
 		{
 			Name:        "Elasticsearch 7.2.0",
 			Slug:        "elasticsearch-7.2.0",
 			ServiceType: "elasticsearch",
 			Version:     "7.2.0",
-			MultiTenant: true,
+			MultiTenant: Pointer(true),
 		},
 	}
 	releases, err := s.client.Release.All(context.Background())
@@ -108,7 +108,7 @@ func (s *ClientMockTestSuite) TestReleaseClient_GetBySlug() {
 		Name:        "Elasticsearch 7.2.0",
 		ServiceType: "elasticsearch",
 		Version:     "7.2.0",
-		MultiTenant: true,
+		MultiTenant: Pointer(true),
 	}
 
 	resultResp, err := s.client.Release.GetBySlug(context.Background(), targetReleaseSlug)

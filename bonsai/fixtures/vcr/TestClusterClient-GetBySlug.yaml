@@ -20,7 +20,7 @@ interactions:
             Content-Type:
                 - application/json
             User-Agent:
-                - bonsai-api-go/v2.1.0 bonsai-api-go/v2.1.0
+                - bonsai-api-go/v2.2.0 bonsai-api-go/v2.2.0
         url: https://api.bonsai.io/clusters/dcek-group-llc-5240651189
         method: GET
       response:
@@ -43,7 +43,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Date:
-                - Wed, 15 May 2024 00:14:38 GMT
+                - Wed, 15 May 2024 01:09:14 GMT
             Etag:
                 - W/"c289f3e152b59209b26bcc8f03b2a044"
             Referrer-Policy:
@@ -65,11 +65,11 @@ interactions:
             X-Permitted-Cross-Domain-Policies:
                 - none
             X-Request-Id:
-                - 989e03a8-77ec-4ac4-9dd5-927b8dd88683
+                - f15d031e-da32-47e7-acdc-d9dc1544f9b2
             X-Runtime:
-                - "0.059638"
+                - "0.038887"
             X-Xss-Protection:
                 - 1; mode=block
         status: 200 OK
         code: 200
-        duration: 337.2444ms
+        duration: 303.6778ms

@@ -24,9 +24,9 @@ type CloudProvider struct {
 // Space represents the server groups and geographic regions available to their
 // account, where clusters may be provisioned.
 type Space struct {
-	Path           string        `json:"path"`
-	PrivateNetwork bool          `json:"private_network"`
-	Cloud          CloudProvider `json:"cloud,omitempty"`
+	Path           string         `json:"path"`
+	PrivateNetwork *bool          `json:"private_network,omitempty"`
+	Cloud          *CloudProvider `json:"cloud,omitempty"`
 
 	// The geographic region in which the cluster is running.
 	Region string `json:"region,omitempty"`

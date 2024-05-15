@@ -68,8 +68,8 @@ func (s *ClientMockTestSuite) TestPlanClient_All() {
 			Name:                    "Sandbox",
 			PriceInCents:            0,
 			BillingIntervalInMonths: 1,
-			SingleTenant:            false,
-			PrivateNetwork:          false,
+			SingleTenant:            new(bool),
+			PrivateNetwork:          new(bool),
 			AvailableReleases: []bonsai.Release{
 				// TODO: we'll see whether the response is actually a
 				// shortened version like this or a slug
@@ -92,8 +92,8 @@ func (s *ClientMockTestSuite) TestPlanClient_All() {
 			Name:                    "Standard Small",
 			PriceInCents:            5000,
 			BillingIntervalInMonths: 1,
-			SingleTenant:            false,
-			PrivateNetwork:          false,
+			SingleTenant:            Pointer(false),
+			PrivateNetwork:          Pointer(false),
 			AvailableReleases: []bonsai.Release{
 				{Slug: "elasticsearch-5.6.16"},
 				{Slug: "elasticsearch-6.8.3"},
@@ -155,8 +155,8 @@ func (s *ClientMockTestSuite) TestPlanClient_GetByPath() {
 		Name:                    "Sandbox",
 		PriceInCents:            0,
 		BillingIntervalInMonths: 1,
-		SingleTenant:            false,
-		PrivateNetwork:          false,
+		SingleTenant:            new(bool),
+		PrivateNetwork:          new(bool),
 		AvailableReleases: []bonsai.Release{
 			{Slug: "elasticsearch-7.2.0"},
 		},
