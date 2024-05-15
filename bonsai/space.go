@@ -38,7 +38,7 @@ type Space struct {
 
 	// The geographic region in which the cluster is running.
 	Region string `json:"region,omitempty"`
-	// A URI to retrieve more information about this Release.
+	// A URI to retrieve more information about this Space.
 	URI string `json:"uri,omitempty"`
 }
 

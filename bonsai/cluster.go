@@ -34,7 +34,7 @@ type ClusterStats struct {
 
 // ClusterAccess holds information about connecting to the cluster.
 type ClusterAccess struct {
-	// Host name of the cluster
+	// Host name of the cluster.
 	Host string `json:"host"`
 	// HTTP Port the cluster is running on.
 	Port int `json:"port"`
@@ -67,7 +67,7 @@ const (
 	ClusterStateUpdatingPlan   ClusterState = "UPDATING PLAN"
 )
 
-// Cluster represents a subscription cluster.
+// Cluster represents a single cluster on your account.
 type Cluster struct {
 	// Slug represents a unique, machine-readable name for the cluster.
 	// A cluster slug is based its name at creation, to which a random integer
@@ -75,11 +75,12 @@ type Cluster struct {
 	Slug string `json:"slug"`
 	// Name is the human-readable name of the cluster.
 	Name string `json:"name"`
-	// URI is a machine-readable name for the cluster.
+	// URI is a link to additional information about this cluster.
 	URI string `json:"uri"`
 
 	// Plan holds some information about the cluster's current subscription plan.
 	Plan Plan `json:"plan"`
+
 	// Release holds some information about the cluster's current release.
 	Release Release `json:"release"`
 
@@ -282,7 +283,7 @@ func (c *ClusterClient) list(ctx context.Context, opt clusterListOpts) (
 	return results.Clusters, resp, nil
 }
 
-// All lists all Clusters from the Clusters API.
+// All lists all active clusters on your account.
 func (c *ClusterClient) All(ctx context.Context) ([]Cluster, error) {
 	var (
 		err  error
