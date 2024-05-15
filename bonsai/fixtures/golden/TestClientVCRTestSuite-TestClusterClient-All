@@ -1,5 +1,35 @@
 [
   {
+   "slug": "bonsai-api-go-3216591042",
+   "name": "bonsai-api-go-test-cluster-updated",
+   "uri": "https://api.bonsai.io/clusters/bonsai-api-go-3216591042",
+   "plan": {
+    "slug": "standard-nano-comped",
+    "available_releases": [],
+    "available_spaces": [],
+    "uri": "https://api.bonsai.io/plans/standard-nano-comped"
+   },
+   "release": {
+    "slug": "opensearch-2.6.0-mt",
+    "service_type": "opensearch",
+    "version": "2.6.0",
+    "uri": "https://api.bonsai.io/releases/opensearch-2.6.0-mt",
+    "package_name": "2.6.0-mt"
+   },
+   "space": {
+    "path": "omc/bonsai/us-east-1/common",
+    "region": "aws-us-east-1",
+    "uri": "https://api.bonsai.io/spaces/omc/bonsai/us-east-1/common"
+   },
+   "stats": {},
+   "access": {
+    "host": "bonsai-api-go-3216591042.us-east-1.bonsaisearch.net",
+    "port": 443,
+    "scheme": "https"
+   },
+   "state": "PROVISIONED"
+  },
+  {
    "slug": "dcek-group-llc-5240651189",
    "name": "DCEK Group, LLC search",
    "uri": "https://api.bonsai.io/clusters/dcek-group-llc-5240651189",
@@ -18,11 +48,6 @@
    },
    "space": {
     "path": "omc/bonsai/us-east-1/common",
-    "private_network": false,
-    "cloud": {
-     "provider": "",
-     "region": ""
-    },
     "region": "aws-us-east-1",
     "uri": "https://api.bonsai.io/spaces/omc/bonsai/us-east-1/common"
    },

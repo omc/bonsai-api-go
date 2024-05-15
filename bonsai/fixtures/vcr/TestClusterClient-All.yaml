@@ -20,7 +20,7 @@ interactions:
             Content-Type:
                 - application/json
             User-Agent:
-                - bonsai-api-go/v1 bonsai-api-go/1.0.0
+                - bonsai-api-go/v2.2.0 bonsai-api-go/v2.2.0
         url: https://api.bonsai.io/clusters
         method: GET
       response:
@@ -32,7 +32,7 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"pagination":{"page_number":1,"page_size":1000,"total_records":1},"clusters":[{"slug":"dcek-group-llc-5240651189","name":"DCEK Group, LLC search","uri":"https://api.bonsai.io/clusters/dcek-group-llc-5240651189","plan":{"slug":"sandbox-aws-us-east-1","uri":"https://api.bonsai.io/plans/sandbox-aws-us-east-1"},"release":{"service_type":"elasticsearch","package_name":"7.10.2","version":"7.10.2","slug":"elasticsearch-7.10.2","uri":"https://api.bonsai.io/releases/elasticsearch-7.10.2"},"space":{"path":"omc/bonsai/us-east-1/common","region":"aws-us-east-1","uri":"https://api.bonsai.io/spaces/omc/bonsai/us-east-1/common"},"stats":{"docs":2,"shards_used":2,"data_bytes_used":17984},"access":{"host":"dcek-group-llc-5240651189.us-east-1.bonsaisearch.net","port":443,"scheme":"https"},"state":"PROVISIONED"}]}'
+        body: '{"pagination":{"page_number":1,"page_size":1000,"total_records":2},"clusters":[{"slug":"bonsai-api-go-3216591042","name":"bonsai-api-go-test-cluster-updated","uri":"https://api.bonsai.io/clusters/bonsai-api-go-3216591042","plan":{"slug":"standard-nano-comped","uri":"https://api.bonsai.io/plans/standard-nano-comped"},"release":{"service_type":"opensearch","package_name":"2.6.0-mt","version":"2.6.0","slug":"opensearch-2.6.0-mt","uri":"https://api.bonsai.io/releases/opensearch-2.6.0-mt"},"space":{"path":"omc/bonsai/us-east-1/common","region":"aws-us-east-1","uri":"https://api.bonsai.io/spaces/omc/bonsai/us-east-1/common"},"stats":{"docs":0,"shards_used":0,"data_bytes_used":0},"access":{"host":"bonsai-api-go-3216591042.us-east-1.bonsaisearch.net","port":443,"scheme":"https"},"state":"PROVISIONED"},{"slug":"dcek-group-llc-5240651189","name":"DCEK Group, LLC search","uri":"https://api.bonsai.io/clusters/dcek-group-llc-5240651189","plan":{"slug":"sandbox-aws-us-east-1","uri":"https://api.bonsai.io/plans/sandbox-aws-us-east-1"},"release":{"service_type":"elasticsearch","package_name":"7.10.2","version":"7.10.2","slug":"elasticsearch-7.10.2","uri":"https://api.bonsai.io/releases/elasticsearch-7.10.2"},"space":{"path":"omc/bonsai/us-east-1/common","region":"aws-us-east-1","uri":"https://api.bonsai.io/spaces/omc/bonsai/us-east-1/common"},"stats":{"docs":2,"shards_used":2,"data_bytes_used":17984},"access":{"host":"dcek-group-llc-5240651189.us-east-1.bonsaisearch.net","port":443,"scheme":"https"},"state":"PROVISIONED"}]}'
         headers:
             Cache-Control:
                 - max-age=0, private, must-revalidate
@@ -43,9 +43,9 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Date:
-                - Sat, 04 May 2024 11:42:50 GMT
+                - Wed, 15 May 2024 01:07:06 GMT
             Etag:
-                - W/"067d073e09ae505a2c52df89d915b0af"
+                - W/"cd402e924a5732f3365a768550ff38a1"
             Referrer-Policy:
                 - strict-origin-when-cross-origin
             Server:
@@ -65,11 +65,11 @@ interactions:
             X-Permitted-Cross-Domain-Policies:
                 - none
             X-Request-Id:
-                - 625ee3ed-ab85-4fde-8d5d-97d7d564680d
+                - 10ffc134-f484-4586-b5a7-caad4fa2b016
             X-Runtime:
-                - "0.046763"
+                - "0.067215"
             X-Xss-Protection:
                 - 1; mode=block
         status: 200 OK
         code: 200
-        duration: 292.8763ms
+        duration: 320.8215ms

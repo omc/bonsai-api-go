@@ -20,7 +20,7 @@ interactions:
             Content-Type:
                 - application/json
             User-Agent:
-                - bonsai-api-go/v1 bonsai-api-go/1.0.0
+                - bonsai-api-go/v2.2.0 bonsai-api-go/v2.2.0
         url: https://api.bonsai.io/spaces
         method: GET
       response:
@@ -43,7 +43,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Date:
-                - Sat, 04 May 2024 11:44:54 GMT
+                - Wed, 15 May 2024 01:07:33 GMT
             Etag:
                 - W/"9ba8925afc58e91e133d9a2003ae88ed"
             Referrer-Policy:
@@ -65,11 +65,11 @@ interactions:
             X-Permitted-Cross-Domain-Policies:
                 - none
             X-Request-Id:
-                - abf6205a-c77e-4784-8137-85dd7d034836
+                - d5fd0ed3-b888-45e7-8cf3-b6576b3fb4e5
             X-Runtime:
-                - "0.182905"
+                - "0.053957"
             X-Xss-Protection:
                 - 1; mode=block
         status: 200 OK
         code: 200
-        duration: 434.5154ms
+        duration: 322.1804ms

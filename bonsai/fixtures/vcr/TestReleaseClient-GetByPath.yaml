@@ -20,7 +20,7 @@ interactions:
             Content-Type:
                 - application/json
             User-Agent:
-                - bonsai-api-go/v1 bonsai-api-go/1.0.0
+                - bonsai-api-go/v2.2.0 bonsai-api-go/v2.2.0
         url: https://api.bonsai.io/releases/opensearch-2.6.0-mt
         method: GET
       response:
@@ -43,7 +43,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Date:
-                - Sat, 04 May 2024 11:45:04 GMT
+                - Wed, 15 May 2024 01:11:47 GMT
             Etag:
                 - W/"6f986805763c0fe363ac7d2d71e16321"
             Referrer-Policy:
@@ -65,11 +65,11 @@ interactions:
             X-Permitted-Cross-Domain-Policies:
                 - none
             X-Request-Id:
-                - e0e6cf3e-fa65-4edf-88b4-fb21536654aa
+                - 083e3aca-0dd9-4bc7-857b-dc7b95316421
             X-Runtime:
-                - "0.037590"
+                - "0.041705"
             X-Xss-Protection:
                 - 1; mode=block
         status: 200 OK
         code: 200
-        duration: 218.2436ms
+        duration: 210.0072ms

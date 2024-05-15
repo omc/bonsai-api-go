@@ -18,7 +18,7 @@ type Release struct {
 	Slug        string `json:"slug,omitempty"`
 	ServiceType string `json:"service_type,omitempty"`
 	Version     string `json:"version,omitempty"`
-	MultiTenant bool   `json:"multitenant,omitempty"`
+	MultiTenant *bool  `json:"multitenant,omitempty"`
 
 	// A URI to retrieve more information about this Release.
 	URI string `json:"uri,omitempty"`

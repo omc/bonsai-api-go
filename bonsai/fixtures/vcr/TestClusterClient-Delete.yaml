@@ -20,8 +20,8 @@ interactions:
             Content-Type:
                 - application/json
             User-Agent:
-                - bonsai-api-go/v1 bonsai-api-go/1.0.0
-        url: https://api.bonsai.io/clusters/bonsai-api-go-9994392953
+                - bonsai-api-go/v2.2.0 bonsai-api-go/v2.2.0
+        url: https://api.bonsai.io/clusters/bonsai-api-go-5431547241
         method: DELETE
       response:
         proto: HTTP/1.1
@@ -32,7 +32,7 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"message":"Your cluster is being deprovisioned.","monitor":"https://api.bonsai.io/clusters/bonsai-api-go-9994392953","status":202}'
+        body: '{"message":"Your cluster is being deprovisioned.","monitor":"https://api.bonsai.io/clusters/bonsai-api-go-5431547241","status":202}'
         headers:
             Cache-Control:
                 - no-cache
@@ -43,7 +43,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Date:
-                - Sat, 04 May 2024 11:42:50 GMT
+                - Wed, 15 May 2024 01:09:20 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
             Server:
@@ -63,11 +63,11 @@ interactions:
             X-Permitted-Cross-Domain-Policies:
                 - none
             X-Request-Id:
-                - bc1f6723-f11b-4653-b1c5-84588880905e
+                - 34fbe67d-96a4-4462-8c1a-efecc955e709
             X-Runtime:
-                - "0.035741"
+                - "0.037872"
             X-Xss-Protection:
                 - 1; mode=block
         status: 202 Accepted
         code: 202
-        duration: 71.2158ms
+        duration: 357.3277ms
