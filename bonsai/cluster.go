@@ -97,6 +97,10 @@ type Cluster struct {
 	State ClusterState `json:"state"`
 }
 
+type ClusterResultGetBySlug struct {
+	Cluster `json:"cluster"`
+}
+
 // ClustersResultList is a wrapper around a slice of
 // Clusters for json unmarshaling.
 type ClustersResultList struct {
@@ -311,15 +315,14 @@ func (c *ClusterClient) All(ctx context.Context) ([]Cluster, error) {
 }
 
 // GetBySlug gets a Cluster from the Clusters API by its slug.
-//
-//nolint:dupl // Allow duplicated code blocks in code paths that may change
 func (c *ClusterClient) GetBySlug(ctx context.Context, slug string) (Cluster, error) {
 	var (
-		req    *http.Request
-		reqURL *url.URL
-		resp   *Response
-		err    error
-		result Cluster
+		req                *http.Request
+		reqURL             *url.URL
+		resp               *Response
+		err                error
+		result             Cluster
+		intermediaryResult ClusterResultGetBySlug
 	)
 
 	reqURL, err = url.Parse(ClusterAPIBasePath)
@@ -339,11 +342,11 @@ func (c *ClusterClient) GetBySlug(ctx context.Context, slug string) (Cluster, er
 		return result, fmt.Errorf("client.do failed: %w", err)
 	}
 
-	if err = json.Unmarshal(resp.BodyBuf.Bytes(), &result); err != nil {
+	if err = json.Unmarshal(resp.BodyBuf.Bytes(), &intermediaryResult); err != nil {
 		return result, fmt.Errorf("json.Unmarshal failed: %w", err)
 	}
 
-	return result, nil
+	return intermediaryResult.Cluster, nil
 }
 
 // Create requests a new Cluster to be created.
