@@ -39,8 +39,8 @@ func (s *ClientImplTestSuite) TestPlanAllResponseJsonUnmarshal() {
 				Name:                    "Sandbox",
 				PriceInCents:            0,
 				BillingIntervalInMonths: 1,
-				SingleTenant:            new(bool),
-				PrivateNetwork:          new(bool),
+				SingleTenant:            Pointer(false),
+				PrivateNetwork:          Pointer(false),
 				AvailableReleases: []string{
 					"elasticsearch-7.2.0",
 				},

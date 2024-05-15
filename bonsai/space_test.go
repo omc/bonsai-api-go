@@ -92,7 +92,7 @@ func (s *ClientMockTestSuite) TestSpaceClient_GetByPath() {
 	s.NoError(err, "successfully get space by path")
 
 	s.Equal(targetSpacePath, space.Path)
-	s.Equal(new(bool), space.PrivateNetwork)
+	s.Equal(bonsai.Pointer(false), space.PrivateNetwork)
 	s.Equal("aws", space.Cloud.Provider)
 	s.Equal("aws-us-east-1", space.Cloud.Region)
 }
