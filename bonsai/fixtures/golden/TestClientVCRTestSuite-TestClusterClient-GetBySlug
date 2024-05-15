@@ -1,26 +1,39 @@
 {
-  "slug": "",
-  "name": "",
-  "uri": "",
+  "slug": "dcek-group-llc-5240651189",
+  "name": "DCEK Group, LLC search",
+  "uri": "https://api.bonsai.io/clusters/dcek-group-llc-5240651189",
   "plan": {
-   "slug": "",
-   "available_releases": null,
-   "available_spaces": null
+   "slug": "sandbox-aws-us-east-1",
+   "available_releases": [],
+   "available_spaces": [],
+   "uri": "https://api.bonsai.io/plans/sandbox-aws-us-east-1"
   },
-  "release": {},
+  "release": {
+   "slug": "elasticsearch-7.10.2",
+   "service_type": "elasticsearch",
+   "version": "7.10.2",
+   "uri": "https://api.bonsai.io/releases/elasticsearch-7.10.2",
+   "package_name": "7.10.2"
+  },
   "space": {
-   "path": "",
+   "path": "omc/bonsai/us-east-1/common",
    "private_network": false,
    "cloud": {
     "provider": "",
     "region": ""
-   }
+   },
+   "region": "aws-us-east-1",
+   "uri": "https://api.bonsai.io/spaces/omc/bonsai/us-east-1/common"
   },
-  "stats": {},
+  "stats": {
+   "docs": 2,
+   "shards_used": 2,
+   "data_bytes_used": 17984
+  },
   "access": {
-   "host": "",
-   "port": 0,
-   "scheme": ""
+   "host": "dcek-group-llc-5240651189.us-east-1.bonsaisearch.net",
+   "port": 443,
+   "scheme": "https"
   },
-  "state": ""
+  "state": "PROVISIONED"
  }

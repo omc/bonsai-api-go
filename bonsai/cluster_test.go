@@ -255,40 +255,42 @@ func (s *ClientMockTestSuite) TestClusterClient_GetBySlug() {
 	s.serveMux.Get(urlPath, func(w http.ResponseWriter, _ *http.Request) {
 		respStr := fmt.Sprintf(`
 				{			
-					"slug": "%s",			
-					"name": "second_testing_cluster",			
-					"uri": "https://api.bonsai.io/clusters/second-testing-clust-1234567890",			
-					"plan": {		 	 
-						"slug": "sandbox-aws-us-east-1",			  
-						"uri": "https://api.bonsai.io/plans/sandbox-aws-us-east-1"			
-					},	 	 
-					"release": {			  
-						"version": "7.2.0",			  
-						"slug": "elasticsearch-7.2.0",	
-						"package_name": "7.2.0",	
-						"service_type": "elasticsearch",			  
-						"uri": "https://api.bonsai.io/releases/elasticsearch-7.2.0"			
-					},  		
-					"space": {			  
-						"path": "omc/bonsai/us-east-1/common",			  
-						"region": "aws-us-east-1",			  
-						"uri": "https://api.bonsai.io/spaces/omc/bonsai/us-east-1/common"			
-					},	  	
-					"stats": {			  
-						"docs": 0,			  
-						"shards_used": 0,			  
-						"data_bytes_used": 0			
-						},	    
-					"access": {			  
-						"host": "second-testing-clust-1234567890.us-east-1.bonsaisearch.net",			  
-						"port": 443,			  
-						"scheme": "https"			
-					},	  	
-					"state": "PROVISIONED"		
+					"cluster": {
+						"slug": "%s",			
+						"name": "second_testing_cluster",			
+						"uri": "https://api.bonsai.io/clusters/second-testing-clust-1234567890",			
+						"plan": {		 	 
+							"slug": "sandbox-aws-us-east-1",			  
+							"uri": "https://api.bonsai.io/plans/sandbox-aws-us-east-1"			
+						},	 	 
+						"release": {			  
+							"version": "7.2.0",			  
+							"slug": "elasticsearch-7.2.0",	
+							"package_name": "7.2.0",	
+							"service_type": "elasticsearch",			  
+							"uri": "https://api.bonsai.io/releases/elasticsearch-7.2.0"			
+						},  		
+						"space": {			  
+							"path": "omc/bonsai/us-east-1/common",			  
+							"region": "aws-us-east-1",			  
+							"uri": "https://api.bonsai.io/spaces/omc/bonsai/us-east-1/common"			
+						},	  	
+						"stats": {			  
+							"docs": 0,			  
+							"shards_used": 0,			  
+							"data_bytes_used": 0			
+							},	    
+						"access": {			  
+							"host": "second-testing-clust-1234567890.us-east-1.bonsaisearch.net",			  
+							"port": 443,			  
+							"scheme": "https"			
+						},	  	
+						"state": "PROVISIONED"		
+					}
 				}
 		`, targetClusterSlug)
 
-		resp := &bonsai.Cluster{}
+		resp := &bonsai.ClusterResultGetBySlug{}
 		err = json.Unmarshal([]byte(respStr), resp)
 		s.NoError(err, "unmarshals json into bonsai.Space")
 
