@@ -91,10 +91,10 @@ func (s *ClientMockTestSuite) TestSpaceClient_GetByPath() {
 	space, err := s.client.Space.GetByPath(ctx, "omc/bonsai/us-east-1/common")
 	s.NoError(err, "successfully get space by path")
 
-	s.Equal(space.Path, targetSpacePath)
-	s.Equal(space.PrivateNetwork, false)
-	s.Equal(space.Cloud.Provider, "aws")
-	s.Equal(space.Cloud.Region, "aws-us-east-1")
+	s.Equal(targetSpacePath, space.Path)
+	s.Equal(bonsai.Pointer(false), space.PrivateNetwork)
+	s.Equal("aws", space.Cloud.Provider)
+	s.Equal("aws-us-east-1", space.Cloud.Region)
 }
 
 // VCR Tests.

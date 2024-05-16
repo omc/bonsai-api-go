@@ -20,7 +20,7 @@ interactions:
             Content-Type:
                 - application/json
             User-Agent:
-                - bonsai-api-go/v1 bonsai-api-go/1.0.0
+                - bonsai-api-go/v2.2.0 bonsai-api-go/v2.2.0
         url: https://api.bonsai.io/clusters
         method: POST
       response:
@@ -32,7 +32,7 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"message":"Your cluster is being provisioned.","monitor":"https://api.bonsai.io/clusters/bonsai-api-go-2471463249","access":{"user":"REDACTED","pass":"REDACTED","host":"bonsai-api-go-2471463249","port":443,"scheme":"https","url":"://REDACTED:REDACTED"},"status":202}'
+        body: '{"message":"Your cluster is being provisioned.","monitor":"https://api.bonsai.io/clusters/bonsai-api-go-5431547241","access":{"user":"REDACTED","pass":"REDACTED","host":"bonsai-api-go-5431547241","port":443,"scheme":"https","url":"://REDACTED:REDACTED@"},"status":202}'
         headers:
             Cache-Control:
                 - no-cache
@@ -43,7 +43,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Date:
-                - Sat, 04 May 2024 11:42:50 GMT
+                - Wed, 15 May 2024 01:08:32 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
             Server:
@@ -63,11 +63,11 @@ interactions:
             X-Permitted-Cross-Domain-Policies:
                 - none
             X-Request-Id:
-                - 12370295-cde9-46cb-a6bc-f23903e5a4dd
+                - 741db3ce-ea88-4c99-b85b-77ee7b1eda7b
             X-Runtime:
-                - "0.098205"
+                - "0.162795"
             X-Xss-Protection:
                 - 1; mode=block
         status: 202 Accepted
         code: 202
-        duration: 130.6072ms
+        duration: 426.2471ms

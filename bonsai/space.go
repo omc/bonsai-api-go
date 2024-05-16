@@ -32,9 +32,9 @@ type Space struct {
 	// Indicates whether the space is isolated and inaccessible from the
 	// public Internet. A VPC connection will be needed to communicate
 	// with a private cluster.
-	PrivateNetwork bool `json:"private_network"`
+	PrivateNetwork *bool          `json:"private_network,omitempty"`
 	// Details about the cloud provider and region attributes.
-	Cloud CloudProvider `json:"cloud,omitempty"`
+	Cloud          *CloudProvider `json:"cloud,omitempty"`
 
 	// The geographic region in which the cluster is running.
 	Region string `json:"region,omitempty"`

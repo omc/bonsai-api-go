@@ -17,11 +17,6 @@
   },
   "space": {
    "path": "omc/bonsai/us-east-1/common",
-   "private_network": false,
-   "cloud": {
-    "provider": "",
-    "region": ""
-   },
    "region": "aws-us-east-1",
    "uri": "https://api.bonsai.io/spaces/omc/bonsai/us-east-1/common"
   },

@@ -4,6 +4,7 @@
    "slug": "elasticsearch-2.4.0",
    "service_type": "elasticsearch",
    "version": "2.4.0",
+   "multitenant": false,
    "package_name": "2.4.0"
   },
   {
@@ -19,6 +20,7 @@
    "slug": "elasticsearch-6.3.2",
    "service_type": "elasticsearch",
    "version": "6.3.2",
+   "multitenant": false,
    "package_name": "6.3.2"
   },
   {
@@ -26,6 +28,7 @@
    "slug": "elasticsearch-6.4.2",
    "service_type": "elasticsearch",
    "version": "6.4.2",
+   "multitenant": false,
    "package_name": "6.4.2"
   },
   {
@@ -33,6 +36,7 @@
    "slug": "elasticsearch-6.5.4",
    "service_type": "elasticsearch",
    "version": "6.5.4",
+   "multitenant": false,
    "package_name": "6.5.4"
   },
   {
@@ -40,6 +44,7 @@
    "slug": "elasticsearch-6.8.17",
    "service_type": "elasticsearch",
    "version": "6.8.17",
+   "multitenant": false,
    "package_name": "6.8.17"
   },
   {
@@ -47,6 +52,7 @@
    "slug": "elasticsearch-6.8.19",
    "service_type": "elasticsearch",
    "version": "6.8.19",
+   "multitenant": false,
    "package_name": "6.8.19"
   },
   {
@@ -70,6 +76,7 @@
    "slug": "opensearch-1.2.4",
    "service_type": "opensearch",
    "version": "1.2.4",
+   "multitenant": false,
    "package_name": "1.2.4"
   },
   {
@@ -77,6 +84,7 @@
    "slug": "opensearch-2.3.0",
    "service_type": "opensearch",
    "version": "2.3.0",
+   "multitenant": false,
    "package_name": "2.3.0"
   },
   {

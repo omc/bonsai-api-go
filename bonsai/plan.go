@@ -34,12 +34,12 @@ type planAllResponse struct {
 	// Indicates whether the plan is single-tenant or not. A value of false
 	// indicates the Cluster will share hardware with other Clusters. Single
 	// tenant environments can be reached via the public Internet.
-	SingleTenant bool `json:"single_tenant,omitempty"`
+	SingleTenant *bool `json:"single_tenant,omitempty"`
 	// Indicates whether the plan is on a publicly addressable network.
 	// Private plans provide environments that cannot be reached by the public
 	// Internet. A VPC connection will be needed to communicate with a private
 	// cluster.
-	PrivateNetwork bool `json:"private_network,omitempty"`
+	PrivateNetwork *bool `json:"private_network,omitempty"`
 	// A collection of search release slugs available for the plan. Additional
 	// information about a release can be retrieved from the Releases API.
 	AvailableReleases []string `json:"available_releases"`
@@ -107,12 +107,12 @@ type Plan struct {
 	// Indicates whether the plan is single-tenant or not. A value of false
 	// indicates the Cluster will share hardware with other Clusters. Single
 	// tenant environments can be reached via the public Internet.
-	SingleTenant bool `json:"single_tenant,omitempty"`
+	SingleTenant *bool `json:"single_tenant,omitempty"`
 	// Indicates whether the plan is on a publicly addressable network.
 	// Private plans provide environments that cannot be reached by the public
 	// Internet. A VPC connection will be needed to communicate with a private
 	// cluster.
-	PrivateNetwork bool `json:"private_network,omitempty"`
+	PrivateNetwork *bool `json:"private_network,omitempty"`
 	// A collection of search release slugs available for the plan. Additional
 	// information about a release can be retrieved from the Releases API.
 	AvailableReleases []Release `json:"available_releases"`

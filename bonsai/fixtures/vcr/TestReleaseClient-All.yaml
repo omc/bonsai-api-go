@@ -20,7 +20,7 @@ interactions:
             Content-Type:
                 - application/json
             User-Agent:
-                - bonsai-api-go/v1 bonsai-api-go/1.0.0
+                - bonsai-api-go/v2.2.0 bonsai-api-go/v2.2.0
         url: https://api.bonsai.io/releases
         method: GET
       response:
@@ -43,7 +43,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Date:
-                - Sat, 04 May 2024 11:45:08 GMT
+                - Wed, 15 May 2024 01:11:44 GMT
             Etag:
                 - W/"d99fed993c4b49c72477901154e07d7a"
             Referrer-Policy:
@@ -65,11 +65,11 @@ interactions:
             X-Permitted-Cross-Domain-Policies:
                 - none
             X-Request-Id:
-                - 612abd70-820a-468f-8c96-95c4767d1456
+                - c0e6509f-d6e6-46e8-bde2-f13d03c46052
             X-Runtime:
-                - "0.044478"
+                - "0.038938"
             X-Xss-Protection:
                 - 1; mode=block
         status: 200 OK
         code: 200
-        duration: 198.2537ms
+        duration: 227.2747ms

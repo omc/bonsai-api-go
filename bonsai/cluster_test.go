@@ -493,7 +493,7 @@ func (s *ClientVCRTestSuite) TestClusterClient_Create() {
 func (s *ClientVCRTestSuite) TestClusterClient_Update() {
 	ctx := context.Background()
 
-	plan, err := s.client.Cluster.Update(ctx, "bonsai-api-go-2471463249", bonsai.ClusterUpdateOpts{
+	plan, err := s.client.Cluster.Update(ctx, "bonsai-api-go-5431547241", bonsai.ClusterUpdateOpts{
 		Name: "bonsai-api-go-test-cluster-updated",
 		Plan: "standard-nano-comped",
 	})
@@ -504,7 +504,7 @@ func (s *ClientVCRTestSuite) TestClusterClient_Update() {
 func (s *ClientVCRTestSuite) TestClusterClient_Delete() {
 	ctx := context.Background()
 
-	plan, err := s.client.Cluster.Destroy(ctx, "bonsai-api-go-9994392953")
+	plan, err := s.client.Cluster.Destroy(ctx, "bonsai-api-go-5431547241")
 	s.NoError(err, "successfully get cluster")
 	assertGolden(s, plan)
 }

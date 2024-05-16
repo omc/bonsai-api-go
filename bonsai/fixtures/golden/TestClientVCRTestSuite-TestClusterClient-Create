@@ -1,12 +1,12 @@
 {
   "message": "Your cluster is being provisioned.",
-  "monitor": "https://api.bonsai.io/clusters/bonsai-api-go-2471463249",
+  "monitor": "https://api.bonsai.io/clusters/bonsai-api-go-5431547241",
   "access": {
-   "host": "bonsai-api-go-2471463249",
+   "host": "bonsai-api-go-5431547241",
    "port": 443,
    "scheme": "https",
    "user": "REDACTED",
    "pass": "REDACTED",
-   "url": "://REDACTED:REDACTED"
+   "url": "://REDACTED:REDACTED@"
   }
  }
