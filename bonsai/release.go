@@ -23,7 +23,7 @@ type Release struct {
 	// The version of the release.
 	Version string `json:"version,omitempty"`
 	// Whether the release is available on multitenant deployments.
-	MultiTenant *bool  `json:"multitenant,omitempty"`
+	MultiTenant *bool `json:"multitenant,omitempty"`
 
 	// A URI to retrieve more information about this Release.
 	URI string `json:"uri,omitempty"`
