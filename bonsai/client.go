@@ -22,7 +22,7 @@ import (
 // Client representation configuration.
 const (
 	// Version reflects this API Client's version.
-	Version = "v2.3.0"
+	Version = "v2.4.0"
 	// BaseEndpoint is the target API URL base location.
 	BaseEndpoint = "https://api.bonsai.io"
 	// UserAgent is the internally used value for the AccessKey-Agent header
