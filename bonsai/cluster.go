@@ -179,7 +179,7 @@ type ClusterCreateOpts struct {
 	// The slug of the Plan that the new cluster will be configured for.
 	// Use the [PlanClient.All] method to view a list of all Plans available.
 	Plan string `json:"plan,omitempty"`
-	// The slug of the Space where the new cluster should be deployed to.
+	// The path of the Space where the new cluster should be deployed to.
 	// Use the [SpaceClient.All] method to view a list of all Spaces.
 	Space string `json:"space,omitempty"`
 	// The Search Service Release that the new cluster will use.
