@@ -43,7 +43,9 @@ type planAllResponse struct {
 	// A collection of search release slugs available for the plan. Additional
 	// information about a release can be retrieved from the Releases API.
 	AvailableReleases []string `json:"available_releases"`
-	AvailableSpaces   []string `json:"available_spaces"`
+	// A collection of Space paths available for the plan. Additional
+	// information about a space can be retrieved from the Spaces API.
+	AvailableSpaces []string `json:"available_spaces"`
 
 	// A URI to retrieve more information about this Plan.
 	URI string `json:"uri,omitempty"`

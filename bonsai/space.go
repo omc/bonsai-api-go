@@ -17,20 +17,28 @@ const (
 // CloudProvider contains details about the cloud provider and region
 // attributes.
 type CloudProvider struct {
+	// A machine-readable name for the cloud provider in which this space is
+	// deployed.
 	Provider string `json:"provider"`
-	Region   string `json:"region"`
+	// A machine-readable name for the geographic region of the server group.
+	Region string `json:"region"`
 }
 
 // Space represents the server groups and geographic regions available to their
 // account, where clusters may be provisioned.
 type Space struct {
-	Path           string         `json:"path"`
-	PrivateNetwork *bool          `json:"private_network,omitempty"`
-	Cloud          *CloudProvider `json:"cloud,omitempty"`
+	// A machine-readable name for the server group.
+	Path string `json:"path"`
+	// Indicates whether the space is isolated and inaccessible from the
+	// public Internet. A VPC connection will be needed to communicate
+	// with a private cluster.
+	PrivateNetwork *bool `json:"private_network,omitempty"`
+	// Details about the cloud provider and region attributes.
+	Cloud *CloudProvider `json:"cloud,omitempty"`
 
 	// The geographic region in which the cluster is running.
 	Region string `json:"region,omitempty"`
-	// A URI to retrieve more information about this Release.
+	// A URI to retrieve more information about this Space.
 	URI string `json:"uri,omitempty"`
 }
 
@@ -125,7 +133,7 @@ func (c *SpaceClient) All(ctx context.Context) ([]Space, error) {
 		return allResults, fmt.Errorf("client.all failed: %w", err)
 	}
 
-	return allResults, err
+	return allResults, err //nolint:nolintlint
 }
 
 //nolint:dupl // Allow duplicated code blocks in code paths that may change

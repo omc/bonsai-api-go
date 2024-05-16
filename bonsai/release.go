@@ -12,13 +12,18 @@ import (
 
 const ReleaseAPIBasePath = "/releases"
 
-// Release is a placeholder for now.
+// Release is a version of Elasticsearch available to the account.
 type Release struct {
-	Name        string `json:"name,omitempty"`
-	Slug        string `json:"slug,omitempty"`
+	// The name for the release.
+	Name string `json:"name,omitempty"`
+	// The machine-readable name for the deployment.
+	Slug string `json:"slug,omitempty"`
+	// The service type of the deployment - for example, "elasticsearch".
 	ServiceType string `json:"service_type,omitempty"`
-	Version     string `json:"version,omitempty"`
-	MultiTenant *bool  `json:"multitenant,omitempty"`
+	// The version of the release.
+	Version string `json:"version,omitempty"`
+	// Whether the release is available on multitenant deployments.
+	MultiTenant *bool `json:"multitenant,omitempty"`
 
 	// A URI to retrieve more information about this Release.
 	URI string `json:"uri,omitempty"`
