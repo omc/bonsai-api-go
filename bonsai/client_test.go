@@ -153,6 +153,8 @@ func (s *ClientVCRTestSuite) BeforeTest(_, testName string) {
 		log.Fatalf("failed to create new recorder: %+v\n", err)
 	}
 
+	s.recorder.SetMatcher(requestBodyMatcher)
+
 	if s.WillRecord() {
 		// Add a hook which removes Authorization headers from all requests
 		hook := func(i *cassette.Interaction) error {

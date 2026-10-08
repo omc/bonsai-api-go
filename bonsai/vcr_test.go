@@ -20,7 +20,9 @@
 package bonsai_test
 
 import (
+	"bytes"
 	"encoding/json"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -70,6 +72,26 @@ func marshal(t testing.TB, v any) []byte {
 		}
 		return data
 	}
+}
+
+// requestBodyMatcher matches an interaction on method, URL, and request body,
+// so a request whose body differs from the recorded one doesn't replay.
+func requestBodyMatcher(r *http.Request, i cassette.Request) bool {
+	if !cassette.DefaultMatcher(r, i) {
+		return false
+	}
+
+	if r.Body == nil || r.Body == http.NoBody {
+		return i.Body == ""
+	}
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		return false
+	}
+	r.Body = io.NopCloser(bytes.NewReader(body))
+
+	return string(body) == i.Body
 }
 
 // riskyHeaderFilter deletes anything that looks risky in request and response
