@@ -6,13 +6,13 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 0
+        content_length: 45
         transfer_encoding: []
         trailer: {}
         host: api.bonsai.io
         remote_addr: ""
         request_uri: ""
-        body: ""
+        body: '{"name":"bonsai-api-go-test-cluster-updated"}'
         form: {}
         headers:
             Accept:

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"path"
@@ -203,6 +204,22 @@ type ClusterUpdateOpts struct {
 }
 
 func (o ClusterUpdateOpts) Valid() error {
+	if o.Name == "" {
+		return errors.New("name can't be empty")
+	}
+	return nil
+}
+
+// ClusterDestroyOpts holds the confirmation the API requires before it
+// deprovisions a cluster.
+type ClusterDestroyOpts struct {
+	// Required. The name of the cluster being destroyed. It must match the
+	// cluster's current name exactly (case and whitespace included), or the
+	// API refuses the request.
+	Name string `json:"name"`
+}
+
+func (o ClusterDestroyOpts) Valid() error {
 	if o.Name == "" {
 		return errors.New("name can't be empty")
 	}
@@ -449,14 +466,41 @@ func (c *ClusterClient) Update(ctx context.Context, slug string, opt ClusterUpda
 
 // Destroy triggers the deprovisioning of the cluster associated with the slug.
 //
-//nolint:dupl // Allow duplicated code blocks in code paths that may change
+// Deprecated: The API refuses a delete that doesn't carry the cluster's name,
+// so this request fails with a 400. Use [ClusterClient.DestroyWithOpts].
 func (c *ClusterClient) Destroy(ctx context.Context, slug string) (ClustersResultDestroy, error) {
+	return c.destroy(ctx, slug, nil)
+}
+
+// DestroyWithOpts triggers the deprovisioning of the cluster associated with
+// the slug. The API requires opt.Name to match the cluster's name exactly, as a
+// safety check against destroying the wrong cluster.
+func (c *ClusterClient) DestroyWithOpts(ctx context.Context, slug string, opt ClusterDestroyOpts) (
+	ClustersResultDestroy,
+	error,
+) {
+	if err := opt.Valid(); err != nil {
+		return ClustersResultDestroy{}, fmt.Errorf("invalid destroy options (%v): %w", opt, err)
+	}
+
+	reqBody, err := json.Marshal(opt)
+	if err != nil {
+		return ClustersResultDestroy{}, fmt.Errorf("failed to marshal options (%v): %w", opt, err)
+	}
+
+	return c.destroy(ctx, slug, reqBody)
+}
+
+// destroy sends the DELETE request for the slug, with reqBody as the request
+// body when it isn't nil.
+func (c *ClusterClient) destroy(ctx context.Context, slug string, reqBody []byte) (ClustersResultDestroy, error) {
 	var (
 		req    *http.Request
 		reqURL *url.URL
 		resp   *Response
 		err    error
 		result ClustersResultDestroy
+		body   io.Reader
 	)
 
 	reqURL, err = url.Parse(ClusterAPIBasePath)
@@ -466,7 +510,11 @@ func (c *ClusterClient) Destroy(ctx context.Context, slug string) (ClustersResul
 
 	reqURL.Path = path.Join(reqURL.Path, slug)
 
-	req, err = c.NewRequest(ctx, "DELETE", reqURL.String(), nil)
+	if reqBody != nil {
+		body = bytes.NewReader(reqBody)
+	}
+
+	req, err = c.NewRequest(ctx, "DELETE", reqURL.String(), body)
 	if err != nil {
 		return result, fmt.Errorf("creating new http request for URL (%s): %w", reqURL.String(), err)
 	}

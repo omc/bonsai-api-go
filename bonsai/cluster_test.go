@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 
@@ -426,13 +427,21 @@ func (s *ClientMockTestSuite) TestClusterClient_Update() {
 	s.Equal(expect, resultResp, "items in expect match items in received cluster update response")
 }
 
-func (s *ClientMockTestSuite) TestClusterClient_Delete() {
-	const targetClusterSlug = "second-testing-clust-1234567890"
+func (s *ClientMockTestSuite) TestClusterClient_DestroyWithOpts() {
+	const (
+		targetClusterSlug = "second-testing-clust-1234567890"
+		targetClusterName = "Second Testing Cluster"
+	)
 
 	reqPath, err := url.JoinPath(bonsai.ClusterAPIBasePath, targetClusterSlug)
 	s.NoError(err, "successfully resolved path")
 
-	s.serveMux.Delete(reqPath, func(w http.ResponseWriter, _ *http.Request) {
+	s.serveMux.Delete(reqPath, func(w http.ResponseWriter, r *http.Request) {
+		reqBody, readErr := io.ReadAll(r.Body)
+		s.NoError(readErr, "reads the request body")
+		s.JSONEq(`{"name": "Second Testing Cluster"}`, string(reqBody), "sends the cluster name in the JSON body")
+		s.Empty(r.URL.RawQuery, "sends no query string")
+
 		respStr := fmt.Sprintf(`
 		{
 			"message": "Your cluster is being deprovisioned.",
@@ -454,10 +463,28 @@ func (s *ClientMockTestSuite) TestClusterClient_Delete() {
 		Monitor: targetClusterSlug,
 	}
 
-	resultResp, err := s.client.Cluster.Destroy(context.Background(), targetClusterSlug)
-	s.NoError(err, "successfully execute create cluster request")
+	resultResp, err := s.client.Cluster.DestroyWithOpts(context.Background(), targetClusterSlug, bonsai.ClusterDestroyOpts{
+		Name: targetClusterName,
+	})
+	s.NoError(err, "successfully execute destroy cluster request")
 
-	s.Equal(expect, resultResp, "items in expect match items in received cluster update response")
+	s.Equal(expect, resultResp, "items in expect match items in received cluster destroy response")
+}
+
+func (s *ClientMockTestSuite) TestClusterClient_DestroyWithOptsRequiresName() {
+	const targetClusterSlug = "second-testing-clust-1234567890"
+
+	reqPath, err := url.JoinPath(bonsai.ClusterAPIBasePath, targetClusterSlug)
+	s.NoError(err, "successfully resolved path")
+
+	requested := false
+	s.serveMux.Delete(reqPath, func(_ http.ResponseWriter, _ *http.Request) {
+		requested = true
+	})
+
+	_, err = s.client.Cluster.DestroyWithOpts(context.Background(), targetClusterSlug, bonsai.ClusterDestroyOpts{})
+	s.ErrorContains(err, "name can't be empty", "refuses to destroy without a name")
+	s.False(requested, "sends no request without a name")
 }
 
 // VCR Tests.
@@ -504,7 +531,9 @@ func (s *ClientVCRTestSuite) TestClusterClient_Update() {
 func (s *ClientVCRTestSuite) TestClusterClient_Delete() {
 	ctx := context.Background()
 
-	plan, err := s.client.Cluster.Destroy(ctx, "bonsai-api-go-5431547241")
+	plan, err := s.client.Cluster.DestroyWithOpts(ctx, "bonsai-api-go-5431547241", bonsai.ClusterDestroyOpts{
+		Name: "bonsai-api-go-test-cluster-updated",
+	})
 	s.NoError(err, "successfully get cluster")
 	assertGolden(s, plan)
 }
